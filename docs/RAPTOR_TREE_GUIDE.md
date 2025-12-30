@@ -13,6 +13,7 @@ RAPTOR (Recursive Abstractive Processing for Tree-Organized Retrieval) implement
 ## What is RAPTOR?
 
 RAPTOR builds a tree structure where:
+
 - **Leaf nodes** = Original document chunks
 - **Internal nodes** = Summaries of child clusters
 - **Root nodes** = Highest-level abstractions
@@ -64,10 +65,10 @@ use reasonkit_mem::{Chunk, raptor::RaptorTree};
 async fn main() -> anyhow::Result<()> {
     // Prepare chunks
     let chunks: Vec<Chunk> = /* ... */;
-    
+
     // Create tree
     let mut tree = RaptorTree::new(3, 5);
-    
+
     // Build tree with embedder and summarizer
     tree.build_from_chunks(
         &chunks,
@@ -80,7 +81,7 @@ async fn main() -> anyhow::Result<()> {
             Ok(summarize_text(text)?)
         },
     ).await?;
-    
+
     Ok(())
 }
 ```
@@ -99,7 +100,7 @@ use reasonkit_mem::{
 async fn main() -> anyhow::Result<()> {
     // Create tree
     let mut tree = RaptorTree::new(3, 5);
-    
+
     // Build from document chunks
     let chunks = vec![/* your chunks */];
     tree.build_from_chunks(
@@ -107,17 +108,17 @@ async fn main() -> anyhow::Result<()> {
         &embed_text,      // Embedding function
         &summarize_text,  // Summarization function
     ).await?;
-    
+
     // Search the tree
     let query_embedding = embed_text("What is machine learning?")?;
     let results = tree.search(&query_embedding, 10)?;
-    
+
     for (node_id, score) in results {
         if let Some(node) = tree.get_node(&node_id) {
             println!("Score: {:.3}, Text: {}", score, node.text);
         }
     }
-    
+
     Ok(())
 }
 ```
@@ -147,7 +148,7 @@ println!("Root count: {}", stats.root_count);
 ## Tree Building Process
 
 1. **Level 0 (Leaves)**: Create nodes from original chunks
-2. **Level 1+ (Internal)**: 
+2. **Level 1+ (Internal)**:
    - Cluster nodes from previous level
    - Summarize each cluster
    - Create parent nodes with summaries
@@ -209,12 +210,12 @@ tree.build_from_chunks(&chunks, &embed_text, &summarize_text).await?;
 
 ## Performance Considerations
 
-| Configuration | Build Time | Search Time | Memory | Use Case |
-|---------------|------------|-------------|--------|----------|
-| **Basic (depth=2, size=5)** | Fast | Fast | Low | Small datasets |
-| **Standard (depth=3, size=5)** | Medium | Medium | Medium | General purpose |
-| **Deep (depth=4, size=10)** | Slow | Slow | High | Large datasets |
-| **Optimized** | Medium | Fast | Medium | Production use |
+| Configuration                  | Build Time | Search Time | Memory | Use Case        |
+| ------------------------------ | ---------- | ----------- | ------ | --------------- |
+| **Basic (depth=2, size=5)**    | Fast       | Fast        | Low    | Small datasets  |
+| **Standard (depth=3, size=5)** | Medium     | Medium      | Medium | General purpose |
+| **Deep (depth=4, size=10)**    | Slow       | Slow        | High   | Large datasets  |
+| **Optimized**                  | Medium     | Fast        | Medium | Production use  |
 
 ## Best Practices
 
@@ -250,10 +251,12 @@ let results = retriever.search_with_raptor("query", 10).await?;
 ## Testing
 
 Comprehensive tests are available in:
+
 - `reasonkit-mem/src/raptor/mod.rs` - Basic RAPTOR tests
 - `reasonkit-mem/src/raptor/optimized.rs` - Optimized RAPTOR tests
 
 Run tests:
+
 ```bash
 cargo test --lib raptor
 ```
@@ -267,4 +270,3 @@ cargo test --lib raptor
 ---
 
 **Status**: ✅ Complete - RAPTOR tree structure is fully implemented with basic and optimized versions. Comprehensive tests and tree building/search functionality included.
-

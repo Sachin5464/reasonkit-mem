@@ -38,16 +38,17 @@ let cache_stats = storage.get_cache_stats().await;
 
 ## Performance Gains
 
-| Operation | Before | After | Improvement |
-|-----------|--------|-------|-------------|
-| Single upsert | 100ms | 100ms | 1x |
-| Batch upsert (100) | 10s | 200ms | **50x** |
-| First query | 50ms | 50ms | 1x |
-| Repeated query | 50ms | 0.5ms | **100x** |
+| Operation          | Before | After | Improvement |
+| ------------------ | ------ | ----- | ----------- |
+| Single upsert      | 100ms  | 100ms | 1x          |
+| Batch upsert (100) | 10s    | 200ms | **50x**     |
+| First query        | 50ms   | 50ms  | 1x          |
+| Repeated query     | 50ms   | 0.5ms | **100x**    |
 
 ## Configuration Presets
 
 ### Development
+
 ```rust
 BatchConfig {
     max_batch_size: 50,
@@ -65,6 +66,7 @@ QueryCacheConfig {
 ```
 
 ### Production
+
 ```rust
 BatchConfig {
     max_batch_size: 100,
@@ -82,6 +84,7 @@ QueryCacheConfig {
 ```
 
 ### High-Throughput
+
 ```rust
 BatchConfig {
     max_batch_size: 500,
@@ -139,11 +142,11 @@ async fn clear_cache(&self)
 
 ## Memory Usage
 
-| Cache Size | Memory Overhead |
-|------------|----------------|
-| 1,000 entries | ~1 MB |
-| 10,000 entries | ~10 MB |
-| 50,000 entries | ~50 MB |
+| Cache Size     | Memory Overhead |
+| -------------- | --------------- |
+| 1,000 entries  | ~1 MB           |
+| 10,000 entries | ~10 MB          |
+| 50,000 entries | ~50 MB          |
 
 ## Benchmarking
 
@@ -158,12 +161,14 @@ open target/criterion/report/index.html
 ## When to Use
 
 ✅ **Use when**:
+
 - High query throughput (> 100 QPS)
 - Repetitive queries
 - Bulk embedding ingestion
 - Latency-sensitive apps
 
 ❌ **Avoid when**:
+
 - Unique query patterns
 - Small batches (< 10)
 - Memory-constrained (< 100MB)
@@ -179,6 +184,7 @@ open target/criterion/report/index.html
 ## Support
 
 For detailed documentation, see:
+
 - `OPTIMIZATION_GUIDE.md` - Comprehensive usage guide
 - `OPTIMIZATION_SUMMARY.md` - Implementation summary
 - `../ARCHITECTURE.md` - Overall system architecture

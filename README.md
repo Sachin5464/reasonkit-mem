@@ -94,13 +94,13 @@ Query → [Dense Encoder] → Qdrant ANN Search → Top-K Dense
 
 ## Technology Stack
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Qdrant** | qdrant-client 1.10+ | Dense vector storage |
-| **Tantivy** | tantivy 0.22+ | BM25 sparse search |
-| **RAPTOR** | Custom Rust | Hierarchical retrieval |
-| **Embeddings** | BGE-M3 / OpenAI | Dense representations |
-| **Reranking** | Cross-encoder | Final precision boost |
+| Component      | Technology          | Purpose                |
+| -------------- | ------------------- | ---------------------- |
+| **Qdrant**     | qdrant-client 1.10+ | Dense vector storage   |
+| **Tantivy**    | tantivy 0.22+       | BM25 sparse search     |
+| **RAPTOR**     | Custom Rust         | Hierarchical retrieval |
+| **Embeddings** | BGE-M3 / OpenAI     | Dense representations  |
+| **Reranking**  | Cross-encoder       | Final precision boost  |
 
 ## Project Structure
 

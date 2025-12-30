@@ -123,13 +123,13 @@ use reasonkit_mem::embedding::{OpenAIEmbedding, EmbeddingProvider};
 async fn main() -> anyhow::Result<()> {
     // Create provider
     let provider = OpenAIEmbedding::openai()?;
-    
+
     // Embed single text
     let result = provider.embed("What is machine learning?").await?;
     if let Some(embedding) = result.dense {
         println!("Embedding dimension: {}", embedding.len());
     }
-    
+
     Ok(())
 }
 ```
@@ -160,13 +160,13 @@ use reasonkit_mem::embedding::local::LocalONNXEmbedding;
 async fn main() -> anyhow::Result<()> {
     // Load BGE-M3 model
     let provider = LocalONNXEmbedding::bge_m3("./models/bge-m3")?;
-    
+
     // Embed text (no API calls, runs locally)
     let result = provider.embed("Hello, world!").await?;
-    
+
     println!("Dimension: {}", provider.dimension());
     println!("Model: {}", provider.model_name());
-    
+
     Ok(())
 }
 ```
@@ -194,17 +194,17 @@ let result2 = provider.embed("Hello").await?;
 
 ### EmbeddingConfig
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `model` | `String` | `"text-embedding-3-small"` | Model identifier |
-| `dimension` | `usize` | `1536` | Embedding dimension |
-| `api_endpoint` | `Option<String>` | OpenAI endpoint | API endpoint URL |
-| `api_key_env` | `Option<String>` | `"OPENAI_API_KEY"` | Environment variable for API key |
-| `batch_size` | `usize` | `100` | Maximum batch size |
-| `normalize` | `bool` | `true` | Normalize embeddings to unit vectors |
-| `timeout_secs` | `u64` | `30` | Request timeout |
-| `enable_cache` | `bool` | `true` | Enable embedding cache |
-| `cache_ttl_secs` | `u64` | `86400` | Cache TTL (24 hours) |
+| Field            | Type             | Default                    | Description                          |
+| ---------------- | ---------------- | -------------------------- | ------------------------------------ |
+| `model`          | `String`         | `"text-embedding-3-small"` | Model identifier                     |
+| `dimension`      | `usize`          | `1536`                     | Embedding dimension                  |
+| `api_endpoint`   | `Option<String>` | OpenAI endpoint            | API endpoint URL                     |
+| `api_key_env`    | `Option<String>` | `"OPENAI_API_KEY"`         | Environment variable for API key     |
+| `batch_size`     | `usize`          | `100`                      | Maximum batch size                   |
+| `normalize`      | `bool`           | `true`                     | Normalize embeddings to unit vectors |
+| `timeout_secs`   | `u64`            | `30`                       | Request timeout                      |
+| `enable_cache`   | `bool`           | `true`                     | Enable embedding cache               |
+| `cache_ttl_secs` | `u64`            | `86400`                    | Cache TTL (24 hours)                 |
 
 ### Pre-configured Models
 
@@ -279,17 +279,18 @@ fn normalize_vector(v: &[f32]) -> Vec<f32> {
 ```
 
 **Benefits:**
+
 - Cosine similarity = dot product
 - Consistent scale across models
 - Better numerical stability
 
 ## Performance Considerations
 
-| Provider | Latency | Throughput | Cost | Privacy | Use Case |
-|----------|---------|------------|------|---------|----------|
-| **OpenAI API** | Medium | High | $$$ | Low | Production, high volume |
-| **Local ONNX** | Low | Medium | $ | High | Development, privacy-sensitive |
-| **Cached** | Very Low | Very High | $ | Depends | Repeated queries |
+| Provider       | Latency  | Throughput | Cost | Privacy | Use Case                       |
+| -------------- | -------- | ---------- | ---- | ------- | ------------------------------ |
+| **OpenAI API** | Medium   | High       | $$$  | Low     | Production, high volume        |
+| **Local ONNX** | Low      | Medium     | $    | High    | Development, privacy-sensitive |
+| **Cached**     | Very Low | Very High  | $    | Depends | Repeated queries               |
 
 ## Best Practices
 
@@ -348,11 +349,13 @@ tree.build_from_chunks(
 ## Testing
 
 Comprehensive tests are available:
+
 - `reasonkit-mem/src/embedding/mod.rs` - Provider tests
 - `reasonkit-mem/src/embedding/cache.rs` - Cache tests
 - `reasonkit-mem/src/embedding/local.rs` - ONNX tests
 
 Run tests:
+
 ```bash
 cargo test --lib embedding
 cargo test --lib embedding --features local-embeddings
@@ -389,13 +392,13 @@ huggingface-cli download intfloat/e5-small-v2 --local-dir ./models/e5-small-v2
 
 Common errors and solutions:
 
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `API key not found` | Missing environment variable | Set `OPENAI_API_KEY` or configure `api_key_env` |
-| `API request failed` | Network/API error | Check network, API status, rate limits |
-| `ONNX model not found` | Missing model file | Download model or check path |
-| `Tokenization failed` | Invalid input | Check text encoding, length limits |
-| `Cache full` | LRU eviction | Increase `max_entries` or reduce TTL |
+| Error                  | Cause                        | Solution                                        |
+| ---------------------- | ---------------------------- | ----------------------------------------------- |
+| `API key not found`    | Missing environment variable | Set `OPENAI_API_KEY` or configure `api_key_env` |
+| `API request failed`   | Network/API error            | Check network, API status, rate limits          |
+| `ONNX model not found` | Missing model file           | Download model or check path                    |
+| `Tokenization failed`  | Invalid input                | Check text encoding, length limits              |
+| `Cache full`           | LRU eviction                 | Increase `max_entries` or reduce TTL            |
 
 ## References
 
@@ -407,4 +410,3 @@ Common errors and solutions:
 ---
 
 **Status**: ✅ Complete - Embedding pipeline is fully implemented with API and ONNX support, comprehensive caching, batching, and normalization. All tests passing (9 tests). Production-ready.
-

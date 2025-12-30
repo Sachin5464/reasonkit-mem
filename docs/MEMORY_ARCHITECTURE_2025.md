@@ -406,36 +406,40 @@ device = 0
 
 Based on MemOS research (159% improvement baseline):
 
-| Operation | Target Latency | Target Throughput |
-|-----------|----------------|-------------------|
-| Store (single) | < 5ms | 1,000/sec |
-| Retrieve (k=10) | < 20ms | 500 queries/sec |
-| Hybrid search | < 50ms | 200 queries/sec |
-| Consolidation | < 1s per 1000 entries | Background |
+| Operation       | Target Latency        | Target Throughput |
+| --------------- | --------------------- | ----------------- |
+| Store (single)  | < 5ms                 | 1,000/sec         |
+| Retrieve (k=10) | < 20ms                | 500 queries/sec   |
+| Hybrid search   | < 50ms                | 200 queries/sec   |
+| Consolidation   | < 1s per 1000 entries | Background        |
 
 ---
 
 ## Roadmap
 
 ### v0.1 - Foundation
+
 - [ ] Core encode/store/retrieve/manage traits
 - [ ] Qdrant embedded backend
 - [ ] Basic RAPTOR integration
 - [ ] Feature-gated integration with reasonkit-core
 
 ### v0.2 - Intelligence
+
 - [ ] Automatic consolidation scheduler
 - [ ] Forgetting policy implementation
 - [ ] Conflict resolution
 - [ ] Provenance tracking (MemCube-style)
 
 ### v0.3 - Performance
+
 - [ ] GPU acceleration support
 - [ ] Hybrid search optimization
 - [ ] Query expansion (HyDE)
 - [ ] Benchmarks vs MemOS
 
 ### v1.0 - Production
+
 - [ ] Multi-tenant isolation
 - [ ] Horizontal scaling
 - [ ] reasonkit-web integration

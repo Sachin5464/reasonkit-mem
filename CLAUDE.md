@@ -14,6 +14,7 @@
 **ReasonKit-Mem is the memory and retrieval infrastructure layer for ReasonKit.**
 
 It provides:
+
 - **Vector Storage**: Qdrant-based dense vector storage with embedded mode
 - **Hybrid Search**: Dense (Qdrant) + Sparse (Tantivy BM25) fusion
 - **RAPTOR Trees**: Hierarchical retrieval for long-form QA
@@ -44,6 +45,7 @@ reasonkit-mem/
 **reasonkit-mem** = MEMORY INFRASTRUCTURE (storage, retrieval, embeddings, RAPTOR)
 
 This separation allows:
+
 - Independent scaling of memory vs reasoning
 - Clear architectural boundaries
 - Potential separate release/versioning
@@ -52,13 +54,13 @@ This separation allows:
 
 ## TECHNOLOGY STACK
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Qdrant** | qdrant-client 1.10+ | Dense vector storage |
-| **Tantivy** | tantivy 0.22+ | BM25 sparse search |
-| **RAPTOR** | Custom Rust | Hierarchical retrieval |
-| **Embeddings** | BGE-M3 / OpenAI | Dense representations |
-| **Reranking** | Cross-encoder | Final precision boost |
+| Component      | Technology          | Purpose                |
+| -------------- | ------------------- | ---------------------- |
+| **Qdrant**     | qdrant-client 1.10+ | Dense vector storage   |
+| **Tantivy**    | tantivy 0.22+       | BM25 sparse search     |
+| **RAPTOR**     | Custom Rust         | Hierarchical retrieval |
+| **Embeddings** | BGE-M3 / OpenAI     | Dense representations  |
+| **Reranking**  | Cross-encoder       | Final precision boost  |
 
 ---
 
@@ -103,12 +105,12 @@ let results = retriever.search("query", &RetrievalConfig::default()).await?;
 
 ## QUALITY STATUS
 
-| Gate | Status | Notes |
-|------|--------|-------|
-| **Build** | ✅ PASS | `cargo build --release` |
-| **Clippy** | ✅ PASS | No warnings |
-| **Tests** | ✅ PASS | 54 tests passing |
-| **Format** | ✅ PASS | `cargo fmt --check` |
+| Gate       | Status  | Notes                   |
+| ---------- | ------- | ----------------------- |
+| **Build**  | ✅ PASS | `cargo build --release` |
+| **Clippy** | ✅ PASS | No warnings             |
+| **Tests**  | ✅ PASS | 54 tests passing        |
+| **Format** | ✅ PASS | `cargo fmt --check`     |
 
 ---
 
@@ -150,6 +152,7 @@ timew summary :week
 ```
 
 **Components:**
+
 - `mem.storage` → Qdrant vector storage
 - `mem.retrieval` → Hybrid search, fusion, reranking
 - `mem.raptor` → RAPTOR hierarchical trees
@@ -216,14 +219,14 @@ IDE_EXTENSIONS:
 
 ## CONSTRAINTS
 
-| Constraint | Details |
-|------------|---------|
-| Rust-only | All core code in Rust |
-| Performance | All hot paths optimized |
-| No ThinkTools | ThinkTools stay in reasonkit-core |
+| Constraint    | Details                               |
+| ------------- | ------------------------------------- |
+| Rust-only     | All core code in Rust                 |
+| Performance   | All hot paths optimized               |
+| No ThinkTools | ThinkTools stay in reasonkit-core     |
 | API Stability | Breaking changes require version bump |
 
 ---
 
-*reasonkit-mem v0.1.0 | Memory Infrastructure | Apache 2.0*
-*Migration Complete: 2025-12-29 | Ready for crates.io publication*
+_reasonkit-mem v0.1.0 | Memory Infrastructure | Apache 2.0_
+_Migration Complete: 2025-12-29 | Ready for crates.io publication_

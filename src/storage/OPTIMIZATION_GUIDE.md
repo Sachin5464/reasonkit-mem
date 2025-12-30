@@ -84,6 +84,7 @@ storage.batch_upsert_embeddings(embeddings, &context).await?;
 ```
 
 **Performance**:
+
 - Sequential: ~10 embeddings/sec
 - Batched (100): ~500 embeddings/sec (50x improvement)
 - Batched + Parallel: ~2000 embeddings/sec (200x improvement)
@@ -134,6 +135,7 @@ let cached_results = storage.search_with_cache(
 ```
 
 **Performance**:
+
 - Uncached query: 50-100ms (network + Qdrant processing)
 - Cached query: < 1ms (memory lookup)
 - Cache hit rate target: > 80% for production workloads
@@ -162,6 +164,7 @@ println!("Warmed {} queries in cache", warmed_count);
 ```
 
 **Use Cases**:
+
 - Application startup: Warm cache with common queries
 - Scheduled jobs: Refresh cache before peak usage
 - A/B testing: Pre-warm cache for test queries
@@ -194,20 +197,24 @@ println!("Cache hit rate: {:.2}%", cache_stats.hit_rate * 100.0);
 ## Performance Targets
 
 ### Cached Queries
+
 - **p50 latency**: < 1ms
 - **p95 latency**: < 5ms
 - **p99 latency**: < 10ms
 
 ### Uncached Queries
+
 - **p50 latency**: < 50ms
 - **p95 latency**: < 100ms
 - **p99 latency**: < 200ms
 
 ### Batch Operations
+
 - **Throughput**: > 1000 embeddings/sec
 - **Latency**: < 100ms per batch (size 100)
 
 ### Cache Performance
+
 - **Hit rate**: > 80% in production
 - **Memory efficiency**: < 100MB for 1000 cached queries
 
@@ -240,6 +247,7 @@ open target/criterion/report/index.html
 ## Configuration Recommendations
 
 ### Development
+
 ```rust
 BatchConfig {
     max_batch_size: 50,
@@ -257,6 +265,7 @@ QueryCacheConfig {
 ```
 
 ### Production
+
 ```rust
 BatchConfig {
     max_batch_size: 100,
@@ -274,6 +283,7 @@ QueryCacheConfig {
 ```
 
 ### High-Throughput
+
 ```rust
 BatchConfig {
     max_batch_size: 500,
@@ -341,11 +351,13 @@ let results = storage.search_with_cache(
 **Symptoms**: Cache hit rate < 50%
 
 **Causes**:
+
 - TTL too short (queries expire before reuse)
 - Query patterns too diverse (no common queries)
 - Cache size too small (frequent evictions)
 
 **Solutions**:
+
 - Increase `ttl_secs` to 600-3600
 - Increase `max_cache_entries` to 10000+
 - Analyze query patterns and warm cache for common queries
@@ -355,11 +367,13 @@ let results = storage.search_with_cache(
 **Symptoms**: Batch throughput < 100 embeddings/sec
 
 **Causes**:
+
 - Network latency to Qdrant
 - Batch size too small or too large
 - Qdrant server overloaded
 
 **Solutions**:
+
 - Enable parallel batching: `parallel_batching: true`
 - Optimize batch size (sweet spot: 100-500)
 - Scale Qdrant cluster horizontally
@@ -370,10 +384,12 @@ let results = storage.search_with_cache(
 **Symptoms**: Storage memory usage increases over time
 
 **Causes**:
+
 - Cache growing unbounded
 - Expired entries not cleaned up
 
 **Solutions**:
+
 - Set reasonable `max_cache_entries` (1000-10000)
 - Enable cache warming: `enable_cache_warming: true`
 - Monitor with `get_cache_stats()`
@@ -449,22 +465,22 @@ storage.clear_cache().await;
 
 ### Base vs Optimized Storage
 
-| Operation | Base Storage | Optimized Storage | Improvement |
-|-----------|-------------|------------------|-------------|
-| Single embedding upsert | 100ms | 100ms | 1x (no change) |
-| Batch upsert (100) | 10s | 200ms | 50x faster |
-| Batch upsert (1000) | 100s | 2s | 50x faster |
-| First query | 50ms | 50ms | 1x (no change) |
-| Repeated query | 50ms | 0.5ms | 100x faster |
-| Hot query (cached) | 50ms | 0.1ms | 500x faster |
+| Operation               | Base Storage | Optimized Storage | Improvement    |
+| ----------------------- | ------------ | ----------------- | -------------- |
+| Single embedding upsert | 100ms        | 100ms             | 1x (no change) |
+| Batch upsert (100)      | 10s          | 200ms             | 50x faster     |
+| Batch upsert (1000)     | 100s         | 2s                | 50x faster     |
+| First query             | 50ms         | 50ms              | 1x (no change) |
+| Repeated query          | 50ms         | 0.5ms             | 100x faster    |
+| Hot query (cached)      | 50ms         | 0.1ms             | 500x faster    |
 
 ### Scalability
 
-| Workload | QPS (Base) | QPS (Optimized) | Memory Usage |
-|----------|-----------|----------------|--------------|
-| Read-heavy (80% cache hit) | 20 QPS | 10,000 QPS | +50MB |
-| Mixed workload | 20 QPS | 1,000 QPS | +100MB |
-| Write-heavy (batched) | 10 QPS | 500 QPS | +10MB |
+| Workload                   | QPS (Base) | QPS (Optimized) | Memory Usage |
+| -------------------------- | ---------- | --------------- | ------------ |
+| Read-heavy (80% cache hit) | 20 QPS     | 10,000 QPS      | +50MB        |
+| Mixed workload             | 20 QPS     | 1,000 QPS       | +100MB       |
+| Write-heavy (batched)      | 10 QPS     | 500 QPS         | +10MB        |
 
 ## Future Enhancements
 

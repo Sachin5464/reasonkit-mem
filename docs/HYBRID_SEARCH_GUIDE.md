@@ -87,14 +87,14 @@ async fn main() -> anyhow::Result<()> {
     // Initialize storage and index
     let storage = Storage::new_embedded().await?;
     let index = IndexManager::new("./index").await?;
-    
+
     // Create retriever
     let retriever = HybridRetriever::new(
         storage,
         index,
         RetrievalConfig::default(),
     );
-    
+
     // Perform hybrid search
     let results = retriever.search_hybrid(
         "What is machine learning?",
@@ -105,11 +105,11 @@ async fn main() -> anyhow::Result<()> {
             ..Default::default()
         },
     ).await?;
-    
+
     for result in results {
         println!("Score: {:.3}, Text: {}", result.score, result.text);
     }
-    
+
     Ok(())
 }
 ```
@@ -193,13 +193,13 @@ let config = RetrievalConfig {
 
 The `alpha` parameter controls the balance between dense and sparse retrieval:
 
-| Alpha | Dense | Sparse | Use Case |
-|-------|-------|--------|----------|
-| `0.0` | 0% | 100% | Pure keyword search (BM25 only) |
-| `0.3` | 30% | 70% | Keyword-heavy queries |
-| `0.5` | 50% | 50% | Balanced (default) |
-| `0.7` | 70% | 30% | Semantic-heavy queries |
-| `1.0` | 100% | 0% | Pure semantic search (vector only) |
+| Alpha | Dense | Sparse | Use Case                           |
+| ----- | ----- | ------ | ---------------------------------- |
+| `0.0` | 0%    | 100%   | Pure keyword search (BM25 only)    |
+| `0.3` | 30%   | 70%    | Keyword-heavy queries              |
+| `0.5` | 50%   | 50%    | Balanced (default)                 |
+| `0.7` | 70%   | 30%    | Semantic-heavy queries             |
+| `1.0` | 100%  | 0%     | Pure semantic search (vector only) |
 
 ## Reranking
 
@@ -216,12 +216,12 @@ let config = RetrievalConfig {
 
 ## Performance Considerations
 
-| Method | Latency | Precision | Recall | Use Case |
-|--------|---------|-----------|--------|----------|
-| **Dense Only** | Low | Medium | High | Semantic queries |
-| **Sparse Only** | Very Low | High | Medium | Keyword queries |
-| **Hybrid (RRF)** | Medium | High | High | General purpose |
-| **Hybrid + Rerank** | High | Very High | High | Maximum precision |
+| Method              | Latency  | Precision | Recall | Use Case          |
+| ------------------- | -------- | --------- | ------ | ----------------- |
+| **Dense Only**      | Low      | Medium    | High   | Semantic queries  |
+| **Sparse Only**     | Very Low | High      | Medium | Keyword queries   |
+| **Hybrid (RRF)**    | Medium   | High      | High   | General purpose   |
+| **Hybrid + Rerank** | High     | Very High | High   | Maximum precision |
 
 ## Best Practices
 
@@ -248,10 +248,12 @@ let results = retriever.search_with_raptor("query", 10).await?;
 ## Testing
 
 Comprehensive tests are available in:
+
 - `reasonkit-mem/src/retrieval/fusion.rs` - Fusion algorithm tests
 - `reasonkit-mem/src/retrieval/mod.rs` - Integration tests
 
 Run tests:
+
 ```bash
 cargo test --lib retrieval
 ```
@@ -265,4 +267,3 @@ cargo test --lib retrieval
 ---
 
 **Status**: ✅ Complete - Hybrid search is fully implemented with RRF, Weighted Sum, and RBF fusion strategies. Comprehensive tests and documentation included.
-

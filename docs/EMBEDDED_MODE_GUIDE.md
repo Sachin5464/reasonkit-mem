@@ -58,7 +58,7 @@ async fn main() -> anyhow::Result<()> {
     // Default config uses file storage (require_qdrant=false)
     let config = EmbeddedStorageConfig::default();
     let storage = Storage::new_embedded(config).await?;
-    
+
     // Use storage...
     Ok(())
 }
@@ -75,7 +75,7 @@ async fn main() -> anyhow::Result<()> {
     let data_path = PathBuf::from("./data");
     let config = EmbeddedStorageConfig::file_only(data_path);
     let storage = Storage::new_embedded(config).await?;
-    
+
     // Guaranteed to use file storage
     Ok(())
 }
@@ -95,7 +95,7 @@ async fn main() -> anyhow::Result<()> {
         1536, // vector dimension
     );
     let storage = Storage::new_embedded(config).await?;
-    
+
     // Uses Qdrant if available, fails if not
     Ok(())
 }
@@ -105,23 +105,26 @@ async fn main() -> anyhow::Result<()> {
 
 ### `EmbeddedStorageConfig`
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `data_path` | `PathBuf` | `~/.local/share/reasonkit/storage` | Path for file-based storage |
-| `collection_name` | `String` | `"reasonkit_default"` | Qdrant collection name |
-| `vector_size` | `usize` | `1536` | Vector dimension (OpenAI ada-002 default) |
-| `require_qdrant` | `bool` | `false` | Whether Qdrant is required (vs optional) |
-| `qdrant_url` | `String` | `"http://localhost:6333"` | Qdrant server URL |
+| Field             | Type      | Default                            | Description                               |
+| ----------------- | --------- | ---------------------------------- | ----------------------------------------- |
+| `data_path`       | `PathBuf` | `~/.local/share/reasonkit/storage` | Path for file-based storage               |
+| `collection_name` | `String`  | `"reasonkit_default"`              | Qdrant collection name                    |
+| `vector_size`     | `usize`   | `1536`                             | Vector dimension (OpenAI ada-002 default) |
+| `require_qdrant`  | `bool`    | `false`                            | Whether Qdrant is required (vs optional)  |
+| `qdrant_url`      | `String`  | `"http://localhost:6333"`          | Qdrant server URL                         |
 
 ### Constructor Methods
 
 #### `EmbeddedStorageConfig::default()`
+
 Creates a default config with file storage fallback.
 
 #### `EmbeddedStorageConfig::file_only(data_path: PathBuf)`
+
 Creates a config that explicitly uses file storage only.
 
 #### `EmbeddedStorageConfig::with_qdrant(url, collection, vector_size)`
+
 Creates a config that requires Qdrant. Will fail if Qdrant is not available.
 
 ## Setting Up Qdrant for Embedded Mode
@@ -200,11 +203,11 @@ let storage = Storage::new_embedded(config).await?;
 
 ## Performance Considerations
 
-| Mode | Latency | Throughput | Memory | Use Case |
-|------|---------|-------------|--------|----------|
-| **Qdrant** | Low | High | Medium | Production, large datasets |
-| **File Storage** | Medium | Medium | Low | Development, small datasets |
-| **In-Memory** | Very Low | Very High | High | Testing, ephemeral data |
+| Mode             | Latency  | Throughput | Memory | Use Case                    |
+| ---------------- | -------- | ---------- | ------ | --------------------------- |
+| **Qdrant**       | Low      | High       | Medium | Production, large datasets  |
+| **File Storage** | Medium   | Medium     | Low    | Development, small datasets |
+| **In-Memory**    | Very Low | Very High  | High   | Testing, ephemeral data     |
 
 ## Best Practices
 
@@ -220,6 +223,7 @@ let storage = Storage::new_embedded(config).await?;
 **Problem**: `require_qdrant=true` but Qdrant server is not running.
 
 **Solutions**:
+
 1. Start Qdrant server: `docker run -p 6333:6333 qdrant/qdrant`
 2. Use file storage: `EmbeddedStorageConfig::file_only(...)`
 3. Check URL: Verify `qdrant_url` is correct
@@ -229,6 +233,7 @@ let storage = Storage::new_embedded(config).await?;
 **Problem**: Insufficient permissions or invalid path.
 
 **Solutions**:
+
 1. Check directory permissions
 2. Use absolute paths
 3. Ensure parent directories exist
@@ -238,6 +243,7 @@ let storage = Storage::new_embedded(config).await?;
 **Problem**: Qdrant is slow to respond.
 
 **Solutions**:
+
 1. Increase timeout in `check_qdrant_health()` (currently 5s)
 2. Check Qdrant server logs
 3. Verify network connectivity
@@ -262,4 +268,3 @@ See `reasonkit-mem/src/storage/mod.rs` for comprehensive test examples:
 ---
 
 **Status**: ✅ Complete - Embedded mode is fully functional with comprehensive tests and documentation.
-
