@@ -132,11 +132,11 @@ The ReasonKit Mem storage system implements a flexible, backend-agnostic archite
 
 ### Storage Backends
 
-| Backend | Use Case | Persistence | Vector Search | Performance |
-|---------|----------|-------------|---------------|-------------|
-| **InMemoryStorage** | Unit tests, prototyping | None | O(n) linear | Fast writes |
-| **FileStorage** | Development, embedded apps | JSON + binary | O(n) linear | Moderate |
-| **QdrantStorage** | Production | Qdrant cluster | HNSW O(log n) | High throughput |
+| Backend             | Use Case                   | Persistence    | Vector Search | Performance     |
+| ------------------- | -------------------------- | -------------- | ------------- | --------------- |
+| **InMemoryStorage** | Unit tests, prototyping    | None           | O(n) linear   | Fast writes     |
+| **FileStorage**     | Development, embedded apps | JSON + binary  | O(n) linear   | Moderate        |
+| **QdrantStorage**   | Production                 | Qdrant cluster | HNSW O(log n) | High throughput |
 
 ### Key Components
 
@@ -1449,13 +1449,13 @@ async fn main() -> anyhow::Result<()> {
 
 ### Performance Targets
 
-| Operation | Target (File) | Target (Qdrant) |
-|-----------|---------------|-----------------|
-| Document store | < 10ms | < 5ms |
-| Document retrieve | < 5ms | < 2ms |
-| Embedding store | < 10ms | < 3ms |
-| Vector search (1k) | < 50ms | < 10ms |
-| Vector search (100k) | < 500ms | < 50ms |
+| Operation            | Target (File) | Target (Qdrant) |
+| -------------------- | ------------- | --------------- |
+| Document store       | < 10ms        | < 5ms           |
+| Document retrieve    | < 5ms         | < 2ms           |
+| Embedding store      | < 10ms        | < 3ms           |
+| Vector search (1k)   | < 50ms        | < 10ms          |
+| Vector search (100k) | < 500ms       | < 50ms          |
 
 ---
 
@@ -1530,4 +1530,4 @@ use reasonkit_mem::storage::{
 ---
 
 *This documentation is part of the ReasonKit Memory Infrastructure.*
-*Report issues at: https://github.com/ReasonKit/reasonkit-mem/issues*
+*Report issues at: <https://github.com/ReasonKit/reasonkit-mem/issues>*

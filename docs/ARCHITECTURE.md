@@ -1,6 +1,6 @@
 # ReasonKit Memory Storage Architecture
 
-> Technical documentation for the reasonkit-mem storage engine.
+> Technical documentation for the ReasonKit-mem storage engine.
 > "Long-term memory, retrieval, and hybrid search infrastructure for ReasonKit."
 
 **Version:** 1.0.0
@@ -25,7 +25,7 @@
 
 ### 1.1 Dual-Layer Memory Architecture
 
-ReasonKit Memory (reasonkit-mem) implements a **dual-layer memory architecture** designed for high-performance retrieval-augmented generation (RAG) workloads. The system separates concerns between:
+ReasonKit Memory (ReasonKit-mem) implements a **dual-layer memory architecture** designed for high-performance retrieval-augmented generation (RAG) workloads. The system separates concerns between:
 
 1. **Hot Layer (Fast Access)**: In-memory structures for frequently accessed data
 2. **Cold Layer (Persistent)**: Disk-backed storage for durability and large datasets
@@ -50,13 +50,13 @@ ReasonKit Memory (reasonkit-mem) implements a **dual-layer memory architecture**
 
 ### 1.2 Design Goals
 
-| Goal | Implementation | Rationale |
-|------|----------------|-----------|
+| Goal                      | Implementation                    | Rationale                       |
+| ------------------------- | --------------------------------- | ------------------------------- |
 | **Sub-millisecond reads** | In-memory cache with LRU eviction | RAG queries require low latency |
-| **Durability** | WAL + Qdrant persistence | No data loss on crash |
-| **Scalability** | Qdrant vector DB backend | Billions of embeddings |
-| **Zero-config start** | File-based fallback | Development simplicity |
-| **Hybrid search** | Dense (Qdrant) + Sparse (Tantivy) | Optimal recall/precision |
+| **Durability**            | WAL + Qdrant persistence          | No data loss on crash           |
+| **Scalability**           | Qdrant vector DB backend          | Billions of embeddings          |
+| **Zero-config start**     | File-based fallback               | Development simplicity          |
+| **Hybrid search**         | Dense (Qdrant) + Sparse (Tantivy) | Optimal recall/precision        |
 
 ### 1.3 Design Constraints
 
@@ -289,12 +289,12 @@ Query Request
 
 **Read Path Latency Targets:**
 
-| Cache Level | Target Latency | Hit Rate (typical) |
-|-------------|----------------|-------------------|
-| Query Cache | < 0.1ms | 20-40% |
-| Embedding Cache | < 0.5ms | 60-80% |
-| Qdrant (HNSW) | 1-5ms | N/A |
-| File Scan | 10-100ms | N/A |
+| Cache Level     | Target Latency | Hit Rate (typical) |
+| --------------- | -------------- | ------------------ |
+| Query Cache     | < 0.1ms        | 20-40%             |
+| Embedding Cache | < 0.5ms        | 60-80%             |
+| Qdrant (HNSW)   | 1-5ms          | N/A                |
+| File Scan       | 10-100ms       | N/A                |
 
 ### 3.3 Sync Path (Hot to Cold Migration)
 
@@ -352,6 +352,7 @@ pub struct Document {
 ```
 
 **Memory Estimation per Document:**
+
 - Base overhead: ~900 bytes
 - Per chunk: ~300 bytes + text length + embedding_id
 - Typical document (10 chunks, 500 words each): ~50KB
@@ -375,6 +376,7 @@ pub struct Chunk {
 ### 4.3 Embedding Storage Format
 
 **In-Memory (EmbeddingCache):**
+
 ```rust
 HashMap<Uuid, CachedEmbedding>
 
@@ -385,6 +387,7 @@ struct CachedEmbedding {
 ```
 
 **On-Disk (File Storage):**
+
 ```
 File: embeddings/{chunk_id}.bin
 Format: Raw little-endian f32 array
@@ -392,6 +395,7 @@ Size: vector_size * 4 bytes (e.g., 1536 * 4 = 6144 bytes for OpenAI)
 ```
 
 **In Qdrant:**
+
 ```
 Point {
     id: UUID string,
@@ -405,6 +409,7 @@ Point {
 ### 4.4 Index Structures
 
 **Tantivy BM25 Index Schema:**
+
 ```
 Fields:
   - doc_id: STRING | STORED
@@ -414,6 +419,7 @@ Fields:
 ```
 
 **Qdrant Collection Config:**
+
 ```rust
 VectorParams {
     size: vector_size,           // e.g., 1536
@@ -459,22 +465,26 @@ ReasonKit-mem relies on the underlying storage backends for durability:
 ### 5.2 Qdrant Durability
 
 Qdrant provides durability through:
+
 - **WAL (Write-Ahead Log)**: All writes are logged before acknowledgment
 - **Snapshots**: Periodic point-in-time snapshots
 - **Replication**: Optional multi-node replication
 
 **Recovery Behavior:**
+
 - On Qdrant restart, WAL replay restores uncommitted changes
 - `wait: true` on upserts ensures write is durable before return
 
 ### 5.3 File Storage Durability
 
 For file-based storage:
+
 - **Atomic Writes**: Files written to temp location, then renamed
 - **JSON Documents**: Human-readable, easy to inspect/recover
 - **Binary Embeddings**: Compact format, checksummed
 
 **File Layout:**
+
 ```
 {data_path}/
 +-- documents/
@@ -511,13 +521,13 @@ async fn get_embeddings(&self, chunk_id: &Uuid) -> Result<Option<Vec<f32>>> {
 
 ### 5.5 Checkpoint Strategy
 
-| Component | Strategy | Frequency |
-|-----------|----------|-----------|
-| EmbeddingCache | Write-through | Every write |
-| QueryCache | Volatile | N/A (rebuilt on demand) |
-| Tantivy Index | Commit on batch | After each document batch |
-| Qdrant | WAL + Snapshot | Configurable (default: async) |
-| File Storage | Immediate sync | Every write |
+| Component      | Strategy        | Frequency                     |
+| -------------- | --------------- | ----------------------------- |
+| EmbeddingCache | Write-through   | Every write                   |
+| QueryCache     | Volatile        | N/A (rebuilt on demand)       |
+| Tantivy Index  | Commit on batch | After each document batch     |
+| Qdrant         | WAL + Snapshot  | Configurable (default: async) |
+| File Storage   | Immediate sync  | Every write                   |
 
 ---
 
@@ -525,23 +535,24 @@ async fn get_embeddings(&self, chunk_id: &Uuid) -> Result<Option<Vec<f32>>> {
 
 ### 6.1 Expected Latencies
 
-| Operation | P50 Latency | P95 Latency | P99 Latency |
-|-----------|-------------|-------------|-------------|
-| Cache Hit (Embedding) | 0.05ms | 0.1ms | 0.2ms |
-| Cache Hit (Query) | 0.02ms | 0.05ms | 0.1ms |
-| Qdrant Search (10K vectors) | 1ms | 3ms | 5ms |
-| Qdrant Search (1M vectors) | 2ms | 5ms | 10ms |
-| Qdrant Search (100M vectors) | 5ms | 15ms | 30ms |
-| BM25 Search (Tantivy) | 0.5ms | 2ms | 5ms |
-| Hybrid Search + Fusion | 3ms | 8ms | 15ms |
-| Hybrid + Rerank (top-10) | 10ms | 25ms | 50ms |
-| File Storage Read | 5ms | 20ms | 50ms |
-| Document Store | 2ms | 10ms | 25ms |
-| Embedding Store | 1ms | 5ms | 10ms |
+| Operation                    | P50 Latency | P95 Latency | P99 Latency |
+| ---------------------------- | ----------- | ----------- | ----------- |
+| Cache Hit (Embedding)        | 0.05ms      | 0.1ms       | 0.2ms       |
+| Cache Hit (Query)            | 0.02ms      | 0.05ms      | 0.1ms       |
+| Qdrant Search (10K vectors)  | 1ms         | 3ms         | 5ms         |
+| Qdrant Search (1M vectors)   | 2ms         | 5ms         | 10ms        |
+| Qdrant Search (100M vectors) | 5ms         | 15ms        | 30ms        |
+| BM25 Search (Tantivy)        | 0.5ms       | 2ms         | 5ms         |
+| Hybrid Search + Fusion       | 3ms         | 8ms         | 15ms        |
+| Hybrid + Rerank (top-10)     | 10ms        | 25ms        | 50ms        |
+| File Storage Read            | 5ms         | 20ms        | 50ms        |
+| Document Store               | 2ms         | 10ms        | 25ms        |
+| Embedding Store              | 1ms         | 5ms         | 10ms        |
 
 ### 6.2 Memory Usage
 
 **Base Memory Footprint:**
+
 ```
 Component                    | Memory Usage
 -----------------------------|------------------
@@ -553,6 +564,7 @@ Connection Pool (10 conn)    | ~10MB
 ```
 
 **Per-Entry Memory:**
+
 ```
 Embedding (1536-dim): 6.14 KB (1536 * 4 bytes + overhead)
 Embedding (768-dim):  3.07 KB
@@ -564,16 +576,19 @@ Chunk (avg 500 words): ~4 KB
 ### 6.3 Disk I/O Patterns
 
 **Write Pattern:**
+
 - Sequential writes for bulk ingestion
 - Random writes for single document updates
 - Qdrant: Append-only WAL, periodic segment compaction
 
 **Read Pattern:**
+
 - Random reads for document/embedding retrieval
 - Sequential scans for BM25 full-text search
 - Qdrant: HNSW graph traversal (random access)
 
 **Recommended Disk Configuration:**
+
 - SSD required for production workloads
 - NVMe preferred for Qdrant segment storage
 - Separate volumes for WAL and data segments
@@ -597,13 +612,13 @@ Vectors/Latency Graph:   |                    /   |
                          +------------------------+
 ```
 
-| Scale | Vectors | RAM (Qdrant) | Search Latency |
-|-------|---------|--------------|----------------|
-| Dev | 10K | 100MB | < 2ms |
-| Small | 100K | 1GB | < 5ms |
-| Medium | 1M | 8GB | < 10ms |
-| Large | 10M | 64GB | < 20ms |
-| XLarge | 100M | 512GB | < 50ms |
+| Scale  | Vectors | RAM (Qdrant) | Search Latency |
+| ------ | ------- | ------------ | -------------- |
+| Dev    | 10K     | 100MB        | < 2ms          |
+| Small  | 100K    | 1GB          | < 5ms          |
+| Medium | 1M      | 8GB          | < 10ms         |
+| Large  | 10M     | 64GB         | < 20ms         |
+| XLarge | 100M    | 512GB        | < 50ms         |
 
 ---
 
@@ -758,14 +773,15 @@ let query_cache = QueryCacheConfig {
 ### 7.3 Memory Budget Guidelines
 
 | Available RAM | max_size (cache) | Expected Vectors |
-|---------------|------------------|------------------|
-| 1 GB | 10,000 | 100K |
-| 4 GB | 50,000 | 500K |
-| 8 GB | 100,000 | 1M |
-| 32 GB | 500,000 | 5M |
-| 128 GB | 2,000,000 | 20M |
+| ------------- | ---------------- | ---------------- |
+| 1 GB          | 10,000           | 100K             |
+| 4 GB          | 50,000           | 500K             |
+| 8 GB          | 100,000          | 1M               |
+| 32 GB         | 500,000          | 5M               |
+| 128 GB        | 2,000,000        | 20M              |
 
 **Formula:**
+
 ```
 cache_memory_mb = max_size * vector_dim * 4 / 1_000_000
 max_size = available_mb * 1_000_000 / (vector_dim * 4)
@@ -794,14 +810,14 @@ REASONKIT_CONNECTION_POOL_SIZE=10
 
 ## Appendix A: Glossary
 
-| Term | Definition |
-|------|------------|
-| **Hot Memory** | In-memory cache for fast access to frequently used data |
-| **Cold Storage** | Persistent disk-backed storage (Qdrant or files) |
-| **HNSW** | Hierarchical Navigable Small World - Qdrant's ANN algorithm |
-| **RRF** | Reciprocal Rank Fusion - algorithm to combine ranked lists |
-| **WAL** | Write-Ahead Log - durability mechanism for crash recovery |
-| **RAPTOR** | Recursive Abstractive Processing for Tree-Organized Retrieval |
+| Term             | Definition                                                    |
+| ---------------- | ------------------------------------------------------------- |
+| **Hot Memory**   | In-memory cache for fast access to frequently used data       |
+| **Cold Storage** | Persistent disk-backed storage (Qdrant or files)              |
+| **HNSW**         | Hierarchical Navigable Small World - Qdrant's ANN algorithm   |
+| **RRF**          | Reciprocal Rank Fusion - algorithm to combine ranked lists    |
+| **WAL**          | Write-Ahead Log - durability mechanism for crash recovery     |
+| **RAPTOR**       | Recursive Abstractive Processing for Tree-Organized Retrieval |
 
 ## Appendix B: Related Documentation
 

@@ -15,7 +15,7 @@ We adhere to Semantic Versioning 2.0.0. Security updates are provided for the cu
 
 If you discover a security vulnerability in ReasonKit Memory, please report it privately:
 
-1. **Email:** security@reasonkit.sh
+1. **Email:** <security@reasonkit.sh>
 2. **Response Time:** We are committed to responding to security reports within 48 hours.
 3. **Process:**
    - We will investigate and verify the issue.
@@ -74,5 +74,5 @@ We use `cargo-deny` to ensure:
 1. **Isolate sensitive data:** Use separate vector collections for different data sensitivity levels.
 2. **Encrypt at rest:** If storing sensitive embeddings, enable encryption on the storage layer.
 3. **Audit access:** Log all access to retrieval endpoints in production.
-4. **Regular updates:** Keep reasonkit-mem updated to receive security patches.
+4. **Regular updates:** Keep ReasonKit-mem updated to receive security patches.
 5. **Review embeddings:** Be aware that text embeddings can leak information about source content.

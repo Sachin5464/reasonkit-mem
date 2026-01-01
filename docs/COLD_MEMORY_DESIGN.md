@@ -1,4 +1,4 @@
-# Cold Memory Design for reasonkit-mem
+# Cold Memory Design for ReasonKit-mem
 
 **Status**: Implemented
 **Location**: `/home/zyxsys/RK-PROJECT/reasonkit-mem/src/storage/cold.rs`
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Cold Memory provides persistent, long-term storage for embeddings and metadata in reasonkit-mem. Unlike Hot Memory (in-memory + Qdrant RAM), Cold Memory prioritizes durability, space efficiency, and archival access patterns over low-latency retrieval.
+Cold Memory provides persistent, long-term storage for embeddings and metadata in ReasonKit-mem. Unlike Hot Memory (in-memory + Qdrant RAM), Cold Memory prioritizes durability, space efficiency, and archival access patterns over low-latency retrieval.
 
 ---
 
@@ -19,15 +19,15 @@ Cold Memory provides persistent, long-term storage for embeddings and metadata i
 
 After analyzing the three options, **Sled** was selected as the optimal choice:
 
-| Criterion | LanceDB | Qdrant Embedded | Sled (Selected) |
-|-----------|---------|-----------------|-----------------|
-| **Pure Rust** | No (Arrow FFI) | No (gRPC) | **Yes** |
-| **Zero External Deps** | No | No | **Yes** |
-| **Embedded Mode** | Yes | Yes | **Yes (native)** |
-| **ACID Transactions** | Partial | Yes | **Yes** |
-| **Debian 13 Compatible** | Needs testing | Yes | **Yes (tested)** |
-| **Space Efficiency** | Good | Good | **Excellent** |
-| **Already in Cargo.toml** | No | Yes | **Yes** |
+| Criterion                 | LanceDB        | Qdrant Embedded | Sled (Selected)  |
+| ------------------------- | -------------- | --------------- | ---------------- |
+| **Pure Rust**             | No (Arrow FFI) | No (gRPC)       | **Yes**          |
+| **Zero External Deps**    | No             | No              | **Yes**          |
+| **Embedded Mode**         | Yes            | Yes             | **Yes (native)** |
+| **ACID Transactions**     | Partial        | Yes             | **Yes**          |
+| **Debian 13 Compatible**  | Needs testing  | Yes             | **Yes (tested)** |
+| **Space Efficiency**      | Good           | Good            | **Excellent**    |
+| **Already in Cargo.toml** | No             | Yes             | **Yes**          |
 
 **Justification:**
 
@@ -40,6 +40,7 @@ After analyzing the three options, **Sled** was selected as the optimal choice:
 ### Key-Value Store: **Sled** (Unified)
 
 Rather than using separate systems, we use Sled's tree structure for both:
+
 - Embeddings tree: Stores vectors + content + metadata
 - Metadata tree: Reserved for future indexing
 
@@ -179,28 +180,28 @@ async fn stats(&self) -> ColdMemoryStats;
 
 ### Write Performance
 
-| Operation | Latency (p50) | Latency (p99) | Notes |
-|-----------|---------------|---------------|-------|
-| Single store | ~100us | ~500us | Single entry |
-| Batch store (100) | ~5ms | ~15ms | Transactional |
-| Batch store (1000) | ~50ms | ~150ms | Transactional |
+| Operation          | Latency (p50) | Latency (p99) | Notes         |
+| ------------------ | ------------- | ------------- | ------------- |
+| Single store       | ~100us        | ~500us        | Single entry  |
+| Batch store (100)  | ~5ms          | ~15ms         | Transactional |
+| Batch store (1000) | ~50ms         | ~150ms        | Transactional |
 
 ### Read Performance
 
-| Operation | Latency (p50) | Latency (p99) | Notes |
-|-----------|---------------|---------------|-------|
-| Get by ID | ~50us | ~200us | Single lookup |
-| Search (1K entries) | ~5ms | ~15ms | Sequential |
-| Search (10K entries) | ~30ms | ~80ms | Parallel |
-| Search (100K entries) | ~200ms | ~500ms | Parallel |
+| Operation             | Latency (p50) | Latency (p99) | Notes         |
+| --------------------- | ------------- | ------------- | ------------- |
+| Get by ID             | ~50us         | ~200us        | Single lookup |
+| Search (1K entries)   | ~5ms          | ~15ms         | Sequential    |
+| Search (10K entries)  | ~30ms         | ~80ms         | Parallel      |
+| Search (100K entries) | ~200ms        | ~500ms        | Parallel      |
 
 ### Space Efficiency
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Overhead per entry | ~100 bytes | Sled metadata |
-| Compression ratio | 2-4x | With LZ4 (optional) |
-| Index overhead | ~10% | B+ tree structure |
+| Metric             | Value      | Notes               |
+| ------------------ | ---------- | ------------------- |
+| Overhead per entry | ~100 bytes | Sled metadata       |
+| Compression ratio  | 2-4x       | With LZ4 (optional) |
+| Index overhead     | ~10%       | B+ tree structure   |
 
 ---
 
@@ -215,7 +216,7 @@ async fn stats(&self) -> ColdMemoryStats;
 4. Return sorted results
 ```
 
-Time complexity: O(n * d) where n = entries, d = dimensions
+Time complexity: O(n \* d) where n = entries, d = dimensions
 
 ### Parallel Search (>= 1000 entries)
 
@@ -287,6 +288,7 @@ Operations:
 ### Sled Auto-Compaction
 
 Sled handles most compaction automatically:
+
 - Background merging of segments
 - Garbage collection of deleted entries
 - Index optimization

@@ -63,13 +63,13 @@ This document specifies the unified API for ReasonKit Memory's dual-layer storag
 
 ### Layer Responsibilities
 
-| Layer | Purpose | Characteristics |
-|-------|---------|-----------------|
-| **Hot Memory** | Frequently accessed data | Low latency (<5ms), limited capacity |
-| **Cold Memory** | Archival storage | Higher latency, unlimited capacity |
-| **WAL** | Durability | Append-only, sequential writes |
-| **Tiering Policy** | Data placement | Access frequency, age-based routing |
-| **Sync Manager** | Consistency | WAL replay, background sync |
+| Layer              | Purpose                  | Characteristics                      |
+| ------------------ | ------------------------ | ------------------------------------ |
+| **Hot Memory**     | Frequently accessed data | Low latency (<5ms), limited capacity |
+| **Cold Memory**    | Archival storage         | Higher latency, unlimited capacity   |
+| **WAL**            | Durability               | Append-only, sequential writes       |
+| **Tiering Policy** | Data placement           | Access frequency, age-based routing  |
+| **Sync Manager**   | Consistency              | WAL replay, background sync          |
 
 ---
 
@@ -1877,22 +1877,22 @@ async fn custom_config_example() -> anyhow::Result<()> {
 
 ### Latency Targets
 
-| Operation | Hot Tier Target | Cold Tier Target |
-|-----------|-----------------|------------------|
-| Single read | < 1ms | < 10ms |
-| Single write | < 2ms | < 20ms |
-| Bulk read (100) | < 10ms | < 100ms |
-| Bulk write (100) | < 20ms | < 200ms |
-| Vector search | < 5ms | < 50ms |
+| Operation        | Hot Tier Target | Cold Tier Target |
+| ---------------- | --------------- | ---------------- |
+| Single read      | < 1ms           | < 10ms           |
+| Single write     | < 2ms           | < 20ms           |
+| Bulk read (100)  | < 10ms          | < 100ms          |
+| Bulk write (100) | < 20ms          | < 200ms          |
+| Vector search    | < 5ms           | < 50ms           |
 
 ### Memory Budget Guidelines
 
 | Deployment Size | Hot Tier Memory | Recommended Entries |
-|-----------------|-----------------|---------------------|
-| Small (dev) | 256MB | 25,000 |
-| Medium | 1GB | 100,000 |
-| Large | 4GB | 400,000 |
-| Enterprise | 16GB+ | 1,500,000+ |
+| --------------- | --------------- | ------------------- |
+| Small (dev)     | 256MB           | 25,000              |
+| Medium          | 1GB             | 100,000             |
+| Large           | 4GB             | 400,000             |
+| Enterprise      | 16GB+           | 1,500,000+          |
 
 ### Tiering Policy Tuning
 
@@ -1942,20 +1942,20 @@ let fast_wal = WalConfig {
 
 ## File Locations
 
-| Artifact | Path |
-|----------|------|
-| Design Document | `/home/zyxsys/RK-PROJECT/reasonkit-mem/docs/DUAL_LAYER_STORAGE_API_DESIGN.md` |
-| Implementation | `/home/zyxsys/RK-PROJECT/reasonkit-mem/src/storage/dual_layer.rs` (to create) |
-| Tests | `/home/zyxsys/RK-PROJECT/reasonkit-mem/tests/dual_layer_tests.rs` (to create) |
-| Benchmarks | `/home/zyxsys/RK-PROJECT/reasonkit-mem/benches/dual_layer_bench.rs` (to create) |
+| Artifact        | Path                                                                            |
+| --------------- | ------------------------------------------------------------------------------- |
+| Design Document | `/home/zyxsys/RK-PROJECT/reasonkit-mem/docs/DUAL_LAYER_STORAGE_API_DESIGN.md`   |
+| Implementation  | `/home/zyxsys/RK-PROJECT/reasonkit-mem/src/storage/dual_layer.rs` (to create)   |
+| Tests           | `/home/zyxsys/RK-PROJECT/reasonkit-mem/tests/dual_layer_tests.rs` (to create)   |
+| Benchmarks      | `/home/zyxsys/RK-PROJECT/reasonkit-mem/benches/dual_layer_bench.rs` (to create) |
 
 ---
 
 ## Revision History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | 2026-01-01 | API Architect | Initial design document |
+| Version | Date       | Author        | Changes                 |
+| ------- | ---------- | ------------- | ----------------------- |
+| 1.0.0   | 2026-01-01 | API Architect | Initial design document |
 
 ---
 

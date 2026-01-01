@@ -653,29 +653,29 @@ async fn test_storage_file_embeddings() {
 fn test_dual_layer_config_default() {
     let config = DualLayerConfig::default();
 
-    assert_eq!(config.sync_interval, Duration::from_secs(60));
-    assert_eq!(config.hot_to_cold_threshold, Duration::from_secs(3600));
-    assert_eq!(config.min_hot_importance, 0.8);
-    assert_eq!(config.max_hot_entries, 10000);
-    assert!(config.auto_sync);
+    // Test nested config structure
+    assert_eq!(config.sync.interval_secs, 60);
+    assert_eq!(config.hot.ttl_secs, 3600);
+    assert_eq!(config.hot.max_entries, 10_000);
+    assert!(config.sync.auto_sync_enabled);
 }
 
 #[test]
-fn test_dual_layer_config_low_latency() {
-    let config = DualLayerConfig::low_latency();
+fn test_dual_layer_config_high_performance() {
+    let config = DualLayerConfig::high_performance(PathBuf::from("/tmp/test"));
 
-    assert_eq!(config.sync_interval, Duration::from_secs(30));
-    assert_eq!(config.hot_to_cold_threshold, Duration::from_secs(7200));
-    assert_eq!(config.max_hot_entries, 50000);
+    // High performance config has larger cache
+    assert_eq!(config.hot.max_entries, 50_000);
+    assert_eq!(config.hot.ttl_secs, 14400); // 4 hours
 }
 
 #[test]
-fn test_dual_layer_config_memory_efficient() {
-    let config = DualLayerConfig::memory_efficient();
+fn test_dual_layer_config_low_memory() {
+    let config = DualLayerConfig::low_memory(PathBuf::from("/tmp/test"));
 
-    assert_eq!(config.sync_interval, Duration::from_secs(120));
-    assert_eq!(config.hot_to_cold_threshold, Duration::from_secs(300));
-    assert_eq!(config.max_hot_entries, 1000);
+    // Low memory config has smaller cache
+    assert_eq!(config.hot.max_entries, 1_000);
+    assert_eq!(config.cold.cache_size_mb, 32);
 }
 
 // ============================================================================

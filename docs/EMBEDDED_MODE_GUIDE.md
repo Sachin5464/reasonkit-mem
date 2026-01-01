@@ -181,7 +181,7 @@ The embedded mode includes automatic health checking:
 
 ## Error Handling
 
-### When `require_qdrant=true` and Qdrant is unavailable:
+### When `require_qdrant=true` and Qdrant is unavailable
 
 ```rust
 let config = EmbeddedStorageConfig::with_qdrant(
@@ -193,7 +193,7 @@ let result = Storage::new_embedded(config).await;
 // Returns: Err("Qdrant required but not available at http://localhost:99999: ...")
 ```
 
-### When `require_qdrant=false`:
+### When `require_qdrant=false`
 
 ```rust
 let config = EmbeddedStorageConfig::default();

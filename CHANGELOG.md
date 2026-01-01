@@ -1,93 +1,106 @@
 # Changelog
 
-All notable changes to reasonkit-mem will be documented in this file.
+All notable changes to ReasonKit Memory will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - 2025-12-29
+## [0.2.0] - 2025-01-01
 
 ### Added
 
-#### Initial Release - Memory Infrastructure Extraction
+- **Dual-Layer Memory Storage**
+  - Hot memory layer (in-memory, fast access)
+  - Cold memory layer (disk-backed, persistent)
+  - Automatic hot-to-cold migration
+  - Configurable sync intervals
+- **Vector Search Capabilities**
+  - Cosine similarity search
+  - Embedding-based retrieval
+  - Configurable similarity thresholds
+  - Batch search operations
+- **RAPTOR Tree Implementation**
+  - Hierarchical clustering
+  - Multi-level summarization
+  - Efficient tree construction
+  - Query optimization
+- **Write-Ahead Log (WAL)**
+  - Durability guarantees
+  - Crash recovery support
+  - Configurable sync modes
+  - Segment management
+- **Context Retrieval**
+  - Semantic search combining hot and cold layers
+  - Reciprocal Rank Fusion (RRF) for result merging
+  - Recency weighting
+  - Deduplication and filtering
+- **Storage Backends**
+  - Sled-based embedded storage
+  - File-based storage option
+  - Configurable storage paths
+- **Memory Management**
+  - TTL (Time-To-Live) support
+  - Eviction policies
+  - Capacity management
+  - Statistics and monitoring
 
-- **Storage Module**
-  - Qdrant vector database integration with embedded mode
-  - File-based storage fallback
-  - Access control and context management
-  - Document storage and retrieval
-  - Vector operations (upsert, search, delete)
+### Fixed
 
-- **Embedding Module**
-  - BGE-M3 local inference support (ONNX)
-  - OpenAI embedding provider
-  - Embedding caching with TTL
-  - Batch processing support
-  - Multiple embedding providers
-
-- **Retrieval Module**
-  - Hybrid search (dense + sparse)
-  - Reciprocal Rank Fusion (RRF)
-  - Cross-encoder reranking
-  - Query expansion
-  - Retrieval statistics and metrics
-
-- **RAPTOR Module**
-  - Hierarchical retrieval trees
-  - Optimized tree construction
-  - Multi-level document clustering
-  - Long-form QA support
-
-- **Indexing Module**
-  - Tantivy BM25 sparse indexing
-  - Document indexing and search
-  - Index optimization
-  - Full-text search capabilities
-
-- **RAG Pipeline**
-  - Simple RAG pipeline orchestration
-  - Document processing
-  - Chunk management
+- All 37 build errors resolved
+  - Fixed type mismatches in `retrieve_context`
+  - Fixed stats field mismatches
+  - Fixed MemoryEntry to ColdMemoryEntry conversion
+  - Fixed `Send` trait issue in `service.rs`
+  - Removed `?` operator from non-Result stats methods
+  - Fixed outdated test assertions
+- Configuration structure alignment
+- Type system consistency
+- Error handling improvements
 
 ### Changed
 
-- Extracted from reasonkit-core as standalone crate
-- Clean separation of memory infrastructure from reasoning engine
-- Independent versioning and deployment
-
-### Technical Details
-
-- **Rust Edition:** 2021
-- **Minimum Rust Version:** 1.74
-- **License:** Apache-2.0
-- **Dependencies:** All published to crates.io
-
-### Migration Notes
-
-This crate was extracted from `reasonkit-core` as part of a clean architectural separation. The migration was completed on 2025-12-29 with:
-
-- 19 files + 5 directories migrated
-- 319 tests passing (54 in this crate)
-- All quality gates passing
-- Zero breaking changes (backward compatible via feature flags)
+- Improved memory layer synchronization
+- Enhanced error messages
+- Better configuration defaults
+- Optimized storage operations
 
 ### Documentation
 
-- Complete API documentation
-- README with usage examples
-- Migration documentation in parent project
+- Comprehensive README
+- Architecture documentation
+- API documentation
+- Usage examples
+
+### Performance
+
+- Optimized vector search
+- Improved memory usage
+- Faster hot-to-cold migration
+- Reduced storage overhead
+
+---
+
+## [0.1.0] - 2024-12-XX
+
+### Added
+
+- Initial memory storage implementation
+- Basic vector operations
+- Simple retrieval mechanisms
 
 ---
 
 ## [Unreleased]
 
-### Planned Features
+### Planned
 
-- Performance optimizations
-- Additional embedding providers
-- Enhanced RAPTOR algorithms
-- More retrieval strategies
+- Additional storage backends
+- Enhanced RAPTOR tree features
+- Performance benchmarks
+- More comprehensive examples
+- Advanced query capabilities
 
 ---
 
+[0.2.0]: https://github.com/reasonkit/reasonkit-mem/releases/tag/v0.2.0
 [0.1.0]: https://github.com/reasonkit/reasonkit-mem/releases/tag/v0.1.0

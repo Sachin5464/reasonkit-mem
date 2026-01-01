@@ -558,8 +558,10 @@ impl MemoryService for MemServiceImpl {
     }
 
     async fn get_context(&self, query: &str, max_tokens: usize) -> MemoryResult<ContextWindow> {
-        let config = self.config.read().unwrap();
-        let top_k = max_tokens / config.chunk_size.max(1);
+        let top_k = {
+            let config = self.config.read().unwrap();
+            max_tokens / config.chunk_size.max(1)
+        };
 
         let results = self.search(query, top_k.max(5)).await?;
 

@@ -16,6 +16,7 @@ This document specifies the complete architecture for a dual-layer memory system
 - **Background Sync Worker**: Async transitions between layers
 
 **Key Design Goals:**
+
 1. Sub-millisecond hot memory access (<1ms p99)
 2. Zero external dependencies for embedded mode
 3. Crash-safe with WAL recovery
@@ -87,6 +88,7 @@ This document specifies the complete architecture for a dual-layer memory system
 ### Purpose
 
 The Hot Memory Layer serves as an ultra-fast cache for active session context. It stores:
+
 - Current conversation embeddings
 - Recently accessed chunks
 - Session-specific metadata
@@ -96,12 +98,12 @@ The Hot Memory Layer serves as an ultra-fast cache for active session context. I
 
 **Why DashMap over alternatives:**
 
-| Solution | Pros | Cons | Decision |
-|----------|------|------|----------|
-| **DashMap** | Lock-free reads, concurrent writes, pure Rust | Slightly higher memory overhead | **SELECTED** |
-| std HashMap + RwLock | Simple, stdlib | Global lock contention | Rejected |
-| Crossbeam SkipMap | Ordered keys | Higher complexity | Rejected |
-| Papaya HashMap | Very fast | Less battle-tested | Alternative |
+| Solution             | Pros                                          | Cons                            | Decision     |
+| -------------------- | --------------------------------------------- | ------------------------------- | ------------ |
+| **DashMap**          | Lock-free reads, concurrent writes, pure Rust | Slightly higher memory overhead | **SELECTED** |
+| std HashMap + RwLock | Simple, stdlib                                | Global lock contention          | Rejected     |
+| Crossbeam SkipMap    | Ordered keys                                  | Higher complexity               | Rejected     |
+| Papaya HashMap       | Very fast                                     | Less battle-tested              | Alternative  |
 
 ### Data Flow Diagram
 
@@ -451,6 +453,7 @@ pub struct HotMemoryLayer {
 ### Purpose
 
 The Cold Storage Layer provides durable, persistent storage for:
+
 - Historical embeddings and chunks
 - Complete document archives
 - RAPTOR tree structures
@@ -458,14 +461,15 @@ The Cold Storage Layer provides durable, persistent storage for:
 
 ### Technology Evaluation
 
-| Solution | Vector Search | KV Store | WAL | Pure Rust | Memory | Decision |
-|----------|---------------|----------|-----|-----------|--------|----------|
-| **LanceDB** | Native | Integrated | Yes | No (Arrow) | Medium | **PRIMARY** |
-| **Qdrant Embedded** | Native | Basic | Yes | No (C++) | High | **FALLBACK** |
-| **Pure Rust (Sled + HNSW)** | HNSW lib | Sled | Sled | Yes | Low | **PORTABLE** |
-| RocksDB + Faiss | Faiss | RocksDB | Yes | No | High | Rejected |
+| Solution                    | Vector Search | KV Store   | WAL  | Pure Rust  | Memory | Decision     |
+| --------------------------- | ------------- | ---------- | ---- | ---------- | ------ | ------------ |
+| **LanceDB**                 | Native        | Integrated | Yes  | No (Arrow) | Medium | **PRIMARY**  |
+| **Qdrant Embedded**         | Native        | Basic      | Yes  | No (C++)   | High   | **FALLBACK** |
+| **Pure Rust (Sled + HNSW)** | HNSW lib      | Sled       | Sled | Yes        | Low    | **PORTABLE** |
+| RocksDB + Faiss             | Faiss         | RocksDB    | Yes  | No         | High   | Rejected     |
 
 **Recommendation: Tiered approach**
+
 1. LanceDB for production (best vector perf)
 2. Pure Rust (Sled + HNSW) for embedded/portable
 3. Qdrant embedded as optional feature
@@ -1503,45 +1507,45 @@ read_only = false
 
 ### Hot Layer Performance
 
-| Operation | Target Latency | Expected Throughput |
-|-----------|----------------|---------------------|
-| Get (hit) | < 100 us | 1M+ ops/sec |
-| Get (miss) | < 200 us | 500K+ ops/sec |
-| Put | < 200 us | 500K+ ops/sec |
-| TTL check (per 1K entries) | < 1 ms | N/A |
-| LRU eviction (per 1K entries) | < 5 ms | N/A |
+| Operation                     | Target Latency | Expected Throughput |
+| ----------------------------- | -------------- | ------------------- |
+| Get (hit)                     | < 100 us       | 1M+ ops/sec         |
+| Get (miss)                    | < 200 us       | 500K+ ops/sec       |
+| Put                           | < 200 us       | 500K+ ops/sec       |
+| TTL check (per 1K entries)    | < 1 ms         | N/A                 |
+| LRU eviction (per 1K entries) | < 5 ms         | N/A                 |
 
 ### Cold Layer Performance
 
-| Operation | Target Latency | Expected Throughput |
-|-----------|----------------|---------------------|
-| Get by ID | < 1 ms | 100K+ ops/sec |
-| Vector search (top-10, 1M vectors) | < 10 ms | 1K+ qps |
-| Vector search (top-100, 1M vectors) | < 50 ms | 200+ qps |
-| BM25 search (top-10) | < 5 ms | 2K+ qps |
-| Hybrid search | < 20 ms | 500+ qps |
-| WAL append | < 100 us | 100K+ ops/sec |
-| Batch insert (100 entries) | < 50 ms | 2K entries/sec |
+| Operation                           | Target Latency | Expected Throughput |
+| ----------------------------------- | -------------- | ------------------- |
+| Get by ID                           | < 1 ms         | 100K+ ops/sec       |
+| Vector search (top-10, 1M vectors)  | < 10 ms        | 1K+ qps             |
+| Vector search (top-100, 1M vectors) | < 50 ms        | 200+ qps            |
+| BM25 search (top-10)                | < 5 ms         | 2K+ qps             |
+| Hybrid search                       | < 20 ms        | 500+ qps            |
+| WAL append                          | < 100 us       | 100K+ ops/sec       |
+| Batch insert (100 entries)          | < 50 ms        | 2K entries/sec      |
 
 ### Layer Transition Performance
 
-| Operation | Target Latency | Notes |
-|-----------|----------------|-------|
-| Promotion (Cold -> Hot) | < 2 ms | Includes deserialization |
-| Demotion (Hot -> Cold) | < 1 ms | Async, non-blocking |
-| Batch demotion (100 entries) | < 10 ms | Background worker |
-| WAL checkpoint | < 500 ms | Every 5 minutes |
-| Full compaction | < 30 sec | Rare, incremental |
+| Operation                    | Target Latency | Notes                    |
+| ---------------------------- | -------------- | ------------------------ |
+| Promotion (Cold -> Hot)      | < 2 ms         | Includes deserialization |
+| Demotion (Hot -> Cold)       | < 1 ms         | Async, non-blocking      |
+| Batch demotion (100 entries) | < 10 ms        | Background worker        |
+| WAL checkpoint               | < 500 ms       | Every 5 minutes          |
+| Full compaction              | < 30 sec       | Rare, incremental        |
 
 ### Memory Footprint
 
-| Component | Size | Notes |
-|-----------|------|-------|
-| Hot Layer (per entry) | ~2 KB + embedding | Embedding = dim * 4 bytes |
-| DashMap overhead | ~64 bytes/entry | Bucket + metadata |
-| Cold entry (on disk) | ~1.5 KB + embedding | Compressed |
-| HNSW index (per vector) | ~200 bytes | M=16, 3 layers |
-| Tantivy index | ~0.5x text size | Compressed inverted index |
+| Component               | Size                | Notes                      |
+| ----------------------- | ------------------- | -------------------------- |
+| Hot Layer (per entry)   | ~2 KB + embedding   | Embedding = dim \* 4 bytes |
+| DashMap overhead        | ~64 bytes/entry     | Bucket + metadata          |
+| Cold entry (on disk)    | ~1.5 KB + embedding | Compressed                 |
+| HNSW index (per vector) | ~200 bytes          | M=16, 3 layers             |
+| Tantivy index           | ~0.5x text size     | Compressed inverted index  |
 
 ### Scaling Characteristics
 
@@ -1952,15 +1956,15 @@ fn cosine_distance(a: &[f32], b: &[f32]) -> f32 {
 
 ## References
 
-1. **DashMap**: https://docs.rs/dashmap
-2. **Sled**: https://docs.rs/sled
-3. **LanceDB**: https://lancedb.com/
+1. **DashMap**: <https://docs.rs/dashmap>
+2. **Sled**: <https://docs.rs/sled>
+3. **LanceDB**: <https://lancedb.com/>
 4. **HNSW Paper**: Malkov & Yashunin (2018) - arXiv:1603.09320
-5. **Tantivy**: https://docs.rs/tantivy
+5. **Tantivy**: <https://docs.rs/tantivy>
 6. **WAL Design**: SQLite WAL documentation
-7. **Qdrant Embedded**: https://qdrant.tech/documentation/
+7. **Qdrant Embedded**: <https://qdrant.tech/documentation/>
 
 ---
 
-*Document generated for reasonkit-mem v0.2.0*
+*Document generated for ReasonKit-mem v0.2.0*
 *Architecture designed for Debian 13+ compatibility*

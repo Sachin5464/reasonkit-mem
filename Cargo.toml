@@ -1,17 +1,17 @@
 [package]
 name = "reasonkit-mem"
-version = "0.2.0"
+version = "0.1.0"
 edition = "2021"
 rust-version = "1.74"
 authors = ["ReasonKit Team <team@reasonkit.sh>"]
-description = "Memory & Retrieval Infrastructure for ReasonKit - Vector storage, hybrid search, RAPTOR trees, and reranking"
+description = "High-performance vector database & RAG memory layer - hybrid search, embeddings, RAPTOR trees, BM25 fusion, and semantic retrieval for AI systems"
 license = "Apache-2.0"
 repository = "https://github.com/reasonkit/reasonkit-mem"
 homepage = "https://reasonkit.sh"
 documentation = "https://docs.rs/reasonkit-mem"
 readme = "README.md"
-keywords = ["rag", "vector-database", "retrieval", "embeddings", "raptor"]
-categories = ["science", "text-processing", "database", "caching"]
+keywords = ["vector-database", "rag", "embeddings", "semantic-search", "retrieval"]
+categories = ["database", "science", "data-structures", "algorithms"]
 
 # Explicit include list for crates.io package
 include = [
@@ -38,7 +38,15 @@ exclude = [
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
-targets = ["x86_64-unknown-linux-gnu"]
+default-target = "x86_64-unknown-linux-gnu"
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "aarch64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    "x86_64-pc-windows-msvc",
+]
+cargo-args = ["--locked"]
 
 [badges]
 maintenance = { status = "actively-developed" }
@@ -167,6 +175,7 @@ tokio-test = "0.4"
 tempfile = "3.10"
 pretty_assertions = "1.4"
 criterion = { version = "0.5", features = ["async_tokio"] }
+proptest = "1.4"
 
 # ============================================================================
 # FEATURES

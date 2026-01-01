@@ -402,10 +402,10 @@ Common errors and solutions:
 
 ## References
 
-- **OpenAI Embeddings**: https://platform.openai.com/docs/guides/embeddings
-- **BGE-M3**: https://huggingface.co/BAAI/bge-m3
-- **E5**: https://huggingface.co/intfloat/e5-small-v2
-- **ONNX Runtime**: https://onnxruntime.ai/
+- **OpenAI Embeddings**: <https://platform.openai.com/docs/guides/embeddings>
+- **BGE-M3**: <https://huggingface.co/BAAI/bge-m3>
+- **E5**: <https://huggingface.co/intfloat/e5-small-v2>
+- **ONNX Runtime**: <https://onnxruntime.ai/>
 
 ---
 

@@ -1,3 +1,7 @@
+#![doc = include_str!("../README.md")]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
+
 //! # ReasonKit Memory Infrastructure
 //!
 //! `reasonkit-mem` provides long-term memory, retrieval, and hybrid search infrastructure
