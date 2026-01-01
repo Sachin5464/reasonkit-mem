@@ -54,20 +54,15 @@ async fn main() -> anyhow::Result<()> {
 }
 ```
 
-### Advanced Usage (Custom Configuration)
+### Storage with Custom Configuration
 
 ```rust
-use reasonkit_mem::{
-    storage::{Storage, EmbeddedStorageConfig},
-    embedding::EmbeddingProvider,
-    retrieval::HybridRetriever,
-    Document, RetrievalConfig,
-};
+use reasonkit_mem::storage::{Storage, EmbeddedStorageConfig};
 use std::path::PathBuf;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    // Create storage with custom config
+    // Create storage with custom file path
     let config = EmbeddedStorageConfig::file_only(PathBuf::from("./data"));
     let storage = Storage::new_embedded_with_config(config).await?;
 
@@ -77,14 +72,71 @@ async fn main() -> anyhow::Result<()> {
         "my_collection",
         1536,
     );
-    let storage = Storage::new_embedded_with_config(qdrant_config).await?;
+    let qdrant_storage = Storage::new_embedded_with_config(qdrant_config).await?;
 
-    // Index documents
-    storage.store_document(&doc, &context).await?;
+    Ok(())
+}
+```
 
-    // Hybrid search
-    let retriever = HybridRetriever::new(storage.clone());
-    let results = retriever.search("query", &RetrievalConfig::default()).await?;
+### Hybrid Search with KnowledgeBase
+
+```rust
+use reasonkit_mem::retrieval::KnowledgeBase;
+use reasonkit_mem::{Document, DocumentType, Source, SourceType};
+use chrono::Utc;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Create in-memory knowledge base
+    let kb = KnowledgeBase::in_memory()?;
+
+    // Create a document
+    let source = Source {
+        source_type: SourceType::Local,
+        url: None,
+        path: Some("notes.md".to_string()),
+        arxiv_id: None,
+        github_repo: None,
+        retrieved_at: Utc::now(),
+        version: None,
+    };
+
+    let doc = Document::new(DocumentType::Note, source)
+        .with_content("Machine learning is a subset of artificial intelligence.".to_string());
+
+    // Add document to knowledge base
+    kb.add(&doc).await?;
+
+    // Search using sparse retrieval (BM25)
+    let results = kb.retriever().search_sparse("machine learning", 5).await?;
+
+    for result in results {
+        println!("Score: {:.3}, Text: {}", result.score, result.text);
+    }
+
+    Ok(())
+}
+```
+
+### Using Embeddings
+
+```rust
+use reasonkit_mem::embedding::{EmbeddingConfig, EmbeddingPipeline, OpenAIEmbedding};
+use reasonkit_mem::retrieval::KnowledgeBase;
+use std::sync::Arc;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Create OpenAI embedding provider (requires OPENAI_API_KEY env var)
+    let embedding_provider = OpenAIEmbedding::openai()?;
+    let pipeline = Arc::new(EmbeddingPipeline::new(Arc::new(embedding_provider)));
+
+    // Create knowledge base with embedding support
+    let kb = KnowledgeBase::in_memory()?
+        .with_embedding_pipeline(pipeline);
+
+    // Now hybrid search will use both dense (vector) and sparse (BM25)
+    // let results = kb.query("semantic search query", 10).await?;
 
     Ok(())
 }
@@ -156,6 +208,76 @@ reasonkit-mem/
 | `default`          | Core functionality                       |
 | `python`           | Python bindings via PyO3                 |
 | `local-embeddings` | Local BGE-M3 embeddings via ONNX Runtime |
+
+## API Reference
+
+### Core Types (re-exported at crate root)
+
+```rust
+use reasonkit_mem::{
+    // Documents
+    Document, DocumentType, DocumentContent,
+    // Chunks
+    Chunk, EmbeddingIds,
+    // Sources
+    Source, SourceType,
+    // Metadata
+    Metadata, Author,
+    // Search
+    SearchResult, MatchSource, RetrievalConfig,
+    // Processing
+    ProcessingStatus, ProcessingState, ContentFormat,
+    // Errors
+    MemError, MemResult,
+};
+```
+
+### Storage Module
+
+```rust
+use reasonkit_mem::storage::{
+    Storage,
+    EmbeddedStorageConfig,
+    StorageBackend,
+    InMemoryStorage,
+    FileStorage,
+    QdrantStorage,
+    AccessContext,
+    AccessLevel,
+};
+```
+
+### Embedding Module
+
+```rust
+use reasonkit_mem::embedding::{
+    EmbeddingProvider,      // Trait for embedding backends
+    OpenAIEmbedding,        // OpenAI API embeddings
+    EmbeddingConfig,        // Configuration
+    EmbeddingPipeline,      // Batch processing pipeline
+    EmbeddingResult,        // Single embedding result
+    EmbeddingVector,        // Vec<f32> alias
+    cosine_similarity,      // Utility function
+    normalize_vector,       // Utility function
+};
+```
+
+### Retrieval Module
+
+```rust
+use reasonkit_mem::retrieval::{
+    HybridRetriever,        // Main retrieval engine
+    KnowledgeBase,          // High-level API
+    HybridResult,           // Search result
+    RetrievalStats,         // Statistics
+    // Fusion
+    FusionEngine,
+    FusionStrategy,
+    // Reranking
+    Reranker,
+    RerankerConfig,
+};
+```
 
 ## License
 
