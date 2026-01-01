@@ -87,7 +87,12 @@ pub enum MemError {
 
     /// Checksum verification failed
     #[error("Checksum mismatch: expected {expected}, got {actual}")]
-    ChecksumMismatch { expected: u32, actual: u32 },
+    ChecksumMismatch {
+        /// Expected checksum value
+        expected: u32,
+        /// Actual checksum value
+        actual: u32,
+    },
 
     /// Recovery error during WAL replay or crash recovery
     #[error("Recovery error: {0}")]
@@ -95,7 +100,12 @@ pub enum MemError {
 
     /// Capacity exceeded for memory limits
     #[error("Capacity exceeded: {current} / {max}")]
-    CapacityExceeded { current: usize, max: usize },
+    CapacityExceeded {
+        /// Current usage
+        current: usize,
+        /// Maximum allowed
+        max: usize,
+    },
 }
 
 impl From<serde_json::Error> for MemError {

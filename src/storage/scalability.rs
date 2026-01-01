@@ -394,7 +394,7 @@ pub fn generate_production_config(assessment: &ScalabilityAssessment) -> Product
             health_check_interval_secs: 60,
             max_idle_secs: 300,
             security: QdrantSecurityConfig {
-                api_key: Some("production-api-key".to_string()),
+                api_key: None, // Placeholder - set via env var in production
                 tls_enabled: true,
                 ca_cert_path: Some("/etc/ssl/certs/ca-certificates.crt".to_string()),
                 client_cert_path: None,
