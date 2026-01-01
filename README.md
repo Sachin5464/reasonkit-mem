@@ -271,6 +271,33 @@ use reasonkit_mem::retrieval::{
 };
 ```
 
+## Version & Maturity
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| **Vector Storage** | ✅ Stable | Qdrant integration production-ready |
+| **Hybrid Search** | ✅ Stable | Dense + Sparse fusion working |
+| **RAPTOR Trees** | ✅ Stable | Hierarchical retrieval implemented |
+| **Embeddings** | ✅ Stable | OpenAI API fully supported |
+| **Local Embeddings** | 🔶 Beta | BGE-M3 ONNX (enable with `local-embeddings` feature) |
+| **Python Bindings** | 🔶 Beta | Build from source with `--features python` |
+
+**Current Version:** v0.1.2 | [CHANGELOG](CHANGELOG.md) | [Releases](https://github.com/reasonkit/reasonkit-mem/releases)
+
+### Verify Installation
+
+```rust
+use reasonkit_mem::storage::Storage;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Quick verification - creates in-memory storage
+    let storage = Storage::new_embedded().await?;
+    println!("ReasonKit Mem initialized successfully!");
+    Ok(())
+}
+```
+
 ## License
 
 Apache License 2.0 - see [LICENSE](https://github.com/reasonkit/reasonkit-mem/blob/main/LICENSE)
@@ -283,7 +310,7 @@ Apache License 2.0 - see [LICENSE](https://github.com/reasonkit/reasonkit-mem/bl
 
 **Part of the ReasonKit Ecosystem**
 
-[ReasonKit Core](https://github.com/ReasonKit/reasonkit-core) | [ReasonKit Web](https://github.com/ReasonKit/reasonkit-web) | [Website](https://reasonkit.sh)
+[ReasonKit Core](https://github.com/reasonkit/reasonkit-core) | [ReasonKit Web](https://github.com/reasonkit/reasonkit-web) | [Website](https://reasonkit.sh)
 
 *"See How Your AI Thinks"*
 
