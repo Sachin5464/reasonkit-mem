@@ -6,7 +6,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/reasonkit-mem?style=flat-square&color=%2306b6d4)](https://crates.io/crates/reasonkit-mem)
 [![docs.rs](https://img.shields.io/docsrs/reasonkit-mem?style=flat-square&color=%2310b981)](https://docs.rs/reasonkit-mem)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square&color=%23a855f7)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square&color=%23a855f7)](./LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.74+-orange?style=flat-square&logo=rust&color=%23f97316)](https://www.rust-lang.org/)
 
 *The Long-Term Memory Layer ("Hippocampus") for AI Reasoning*
@@ -41,7 +41,7 @@ tokio = { version = "1", features = ["full"] }
 
 ### Basic Usage (Embedded Mode)
 
-```rust
+```rust,ignore
 use reasonkit_mem::storage::Storage;
 
 #[tokio::main]
@@ -56,7 +56,7 @@ async fn main() -> anyhow::Result<()> {
 
 ### Storage with Custom Configuration
 
-```rust
+```rust,ignore
 use reasonkit_mem::storage::{Storage, EmbeddedStorageConfig};
 use std::path::PathBuf;
 
@@ -80,7 +80,7 @@ async fn main() -> anyhow::Result<()> {
 
 ### Hybrid Search with KnowledgeBase
 
-```rust
+```rust,ignore
 use reasonkit_mem::retrieval::KnowledgeBase;
 use reasonkit_mem::{Document, DocumentType, Source, SourceType};
 use chrono::Utc;
@@ -120,7 +120,7 @@ async fn main() -> anyhow::Result<()> {
 
 ### Using Embeddings
 
-```rust
+```rust,ignore
 use reasonkit_mem::embedding::{EmbeddingConfig, EmbeddingPipeline, OpenAIEmbedding};
 use reasonkit_mem::retrieval::KnowledgeBase;
 use std::sync::Arc;
@@ -148,31 +148,23 @@ For detailed information about embedded mode, see [docs/EMBEDDED_MODE_GUIDE.md](
 
 ## Architecture
 
-<div align="center">
+![ReasonKit Mem Hybrid Architecture](./brand/readme/hybrid_architecture.png)
+![ReasonKit Mem Hybrid Architecture Technical Diagram](./brand/readme/hybrid_retrieval_engine.svg)
 
-```
-+---------------------------------------------------------------------+
-|                      HYBRID RETRIEVAL                               |
-+---------------------------------------------------------------------+
-|                                                                     |
-|   Query --+---> [Dense Encoder] ---> Qdrant ANN ---> Top-K Dense   |
-|           |                                                         |
-|           +---> [BM25 Tokenizer] ---> Tantivy ---> Top-K Sparse    |
-|                                                                     |
-|                       v                                             |
-|            +----------------------+                                 |
-|            | Reciprocal Rank Fusion|                                |
-|            +----------+-----------+                                 |
-|                       v                                             |
-|            +----------------------+                                 |
-|            | Cross-Encoder Rerank |                                 |
-|            +----------+-----------+                                 |
-|                       v                                             |
-|                 Final Results                                       |
-+---------------------------------------------------------------------+
-```
+### The RAPTOR Algorithm (Hierarchical Indexing)
 
-</div>
+ReasonKit Mem implements **RAPTOR** (Recursive Abstractive Processing for Tree-Organized Retrieval) to answer high-level questions across large document sets.
+
+![ReasonKit Mem RAPTOR Tree Structure](./brand/readme/raptor_tree_structure.svg)
+![ReasonKit Mem RAPTOR Tree](./brand/readme/raptor_tree.png)
+
+### The Memory Dashboard
+
+![ReasonKit Mem Dashboard](./brand/readme/memory_dashboard.png)
+
+### Integration Ecosystem
+
+![ReasonKit Mem Ecosystem](./brand/readme/mem_ecosystem.png)
 
 ## Technology Stack
 
@@ -186,7 +178,7 @@ For detailed information about embedded mode, see [docs/EMBEDDED_MODE_GUIDE.md](
 
 ## Project Structure
 
-```
+```text
 reasonkit-mem/
 ├── src/
 │   ├── storage/      # Qdrant vector + file-based storage
@@ -213,7 +205,7 @@ reasonkit-mem/
 
 ### Core Types (re-exported at crate root)
 
-```rust
+```rust,ignore
 use reasonkit_mem::{
     // Documents
     Document, DocumentType, DocumentContent,
@@ -234,7 +226,7 @@ use reasonkit_mem::{
 
 ### Storage Module
 
-```rust
+```rust,ignore
 use reasonkit_mem::storage::{
     Storage,
     EmbeddedStorageConfig,
@@ -249,7 +241,7 @@ use reasonkit_mem::storage::{
 
 ### Embedding Module
 
-```rust
+```rust,ignore
 use reasonkit_mem::embedding::{
     EmbeddingProvider,      // Trait for embedding backends
     OpenAIEmbedding,        // OpenAI API embeddings
@@ -264,7 +256,7 @@ use reasonkit_mem::embedding::{
 
 ### Retrieval Module
 
-```rust
+```rust,ignore
 use reasonkit_mem::retrieval::{
     HybridRetriever,        // Main retrieval engine
     KnowledgeBase,          // High-level API
@@ -281,11 +273,13 @@ use reasonkit_mem::retrieval::{
 
 ## License
 
-Apache License 2.0 - see [LICENSE](LICENSE)
+Apache License 2.0 - see [LICENSE](https://github.com/reasonkit/reasonkit-mem/blob/main/LICENSE)
 
 ---
 
 <div align="center">
+
+![ReasonKit Ecosystem Connection](./brand/readme/ecosystem_connection.png)
 
 **Part of the ReasonKit Ecosystem**
 

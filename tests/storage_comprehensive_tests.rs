@@ -159,11 +159,21 @@ fn test_memory_entry_is_expired() {
     let entry_long_ttl = MemoryEntry::new("Test").with_ttl(3600);
     assert!(!entry_long_ttl.is_expired());
 
-    // Entry with 0 TTL is immediately expired (since any time > 0)
-    let entry_zero_ttl = MemoryEntry::new("Test").with_ttl(0);
-    // Give it a moment to become expired
-    std::thread::sleep(Duration::from_millis(10));
-    assert!(entry_zero_ttl.is_expired());
+    // Entry with 1 second TTL expires when elapsed > ttl
+    // (TTL is compared using elapsed.num_seconds() > ttl, so needs 2+ seconds)
+    let entry_short_ttl = MemoryEntry::new("Test").with_ttl(1);
+    // Give it a moment - should not be expired yet
+    std::thread::sleep(Duration::from_millis(100));
+    assert!(
+        !entry_short_ttl.is_expired(),
+        "Should not expire in 100ms with 1s TTL"
+    );
+    // Wait for expiration (2.1 seconds total - due to integer truncation)
+    std::thread::sleep(Duration::from_millis(2000));
+    assert!(
+        entry_short_ttl.is_expired(),
+        "Should expire after 2+ seconds"
+    );
 }
 
 #[test]
@@ -278,40 +288,46 @@ fn test_embedding_cache_lru_eviction() {
 fn test_embedding_cache_ttl_expiration() {
     let config = EmbeddingCacheConfig {
         max_size: 100,
-        ttl_secs: 0, // Immediate expiration
+        ttl_secs: 1, // 1 second TTL
     };
     let mut cache = EmbeddingCache::new(config);
 
     let id = Uuid::new_v4();
     cache.put(id, vec![1.0, 2.0]);
 
-    // Wait a tiny bit for expiration
-    std::thread::sleep(Duration::from_millis(10));
+    // Should still be valid immediately
+    assert!(cache.get(&id).is_some(), "Should be valid immediately");
 
-    // Should be expired now
+    // Wait for expiration (2.1 seconds - need elapsed > ttl_secs due to as_secs() truncation)
+    std::thread::sleep(Duration::from_millis(2100));
+
+    // Should be expired now (elapsed.as_secs() = 2 > ttl_secs = 1)
     let result = cache.get(&id);
-    assert!(result.is_none());
+    assert!(result.is_none(), "Should be expired after 2+ seconds");
 }
 
 #[test]
 fn test_embedding_cache_cleanup_expired() {
     let config = EmbeddingCacheConfig {
         max_size: 100,
-        ttl_secs: 0, // Immediate expiration
+        ttl_secs: 1, // 1 second TTL
     };
     let mut cache = EmbeddingCache::new(config);
 
     let id = Uuid::new_v4();
     cache.put(id, vec![1.0]);
 
-    // Wait for expiration
-    std::thread::sleep(Duration::from_millis(10));
+    // Wait for expiration (2.1 seconds)
+    std::thread::sleep(Duration::from_millis(2100));
 
     // Cleanup expired entries
     cache.cleanup_expired();
 
     // Entry should be gone
-    assert!(cache.get(&id).is_none());
+    assert!(
+        cache.get(&id).is_none(),
+        "Should be cleaned up after expiration"
+    );
 }
 
 // ============================================================================

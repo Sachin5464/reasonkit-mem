@@ -400,6 +400,8 @@ impl MemServiceImpl {
 
     /// Convert external Document to internal MemDocument.
     fn to_mem_document(&self, doc: &Document) -> MemDocument {
+        use crate::types::{Chunk as MemChunk, EmbeddingIds};
+
         let source = Source {
             source_type: SourceType::Local,
             url: None,
@@ -420,6 +422,22 @@ impl MemServiceImpl {
 
         // Convert metadata to tags
         mem_doc.metadata.tags = doc.metadata.keys().cloned().collect();
+
+        // Create a single chunk from content for BM25 indexing
+        if !doc.content.is_empty() {
+            let chunk = MemChunk {
+                id: Uuid::new_v4(),
+                text: doc.content.clone(),
+                index: 0,
+                start_char: 0,
+                end_char: doc.content.len(),
+                token_count: Some(doc.content.split_whitespace().count()),
+                section: None,
+                page: None,
+                embedding_ids: EmbeddingIds::default(),
+            };
+            mem_doc.chunks.push(chunk);
+        }
 
         mem_doc
     }

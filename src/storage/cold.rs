@@ -1162,7 +1162,11 @@ mod tests {
                 .await
                 .expect("Batch store failed");
             cold.flush().await.expect("Flush failed");
+            drop(cold); // Ensure database is released before reopening
         }
+
+        // Brief delay to ensure file lock is released (Sled async cleanup)
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
 
         // Verify all entries persist
         {
@@ -1293,7 +1297,11 @@ mod tests {
             .expect("Search failed");
         assert!(!results.is_empty());
 
-        // Entry should fail 0 seconds max age
+        // Wait 1.1 seconds so entry is definitively older than 1 second
+        // (max_age=0 means "must be from the future", which is impossible)
+        tokio::time::sleep(std::time::Duration::from_millis(1100)).await;
+
+        // Entry should fail 0 seconds max age (entry is now >0 seconds old)
         let filter = SearchFilter::new().with_max_age(0);
         let results = cold
             .search_with_filters(&query, 10, &filter)
