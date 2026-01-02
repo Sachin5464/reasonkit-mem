@@ -14,7 +14,7 @@ use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criteri
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, RwLock};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 use tokio::runtime::Runtime;
 use uuid::Uuid;
 
@@ -24,6 +24,7 @@ use uuid::Uuid;
 
 /// Entry stored in memory layers
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 struct MemoryEntry {
     id: Uuid,
     embedding: Vec<f32>,
@@ -218,6 +219,7 @@ impl ColdMemory {
 
 /// Write-Ahead Log entry
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 struct WalEntry {
     sequence: u64,
     operation: WalOperation,
@@ -226,6 +228,7 @@ struct WalEntry {
 }
 
 #[derive(Clone, Debug)]
+#[allow(dead_code)]
 enum WalOperation {
     Write(MemoryEntry),
     Delete(Uuid),
@@ -352,7 +355,7 @@ impl DualLayerMemory {
 
         // Merge and deduplicate
         let mut seen = std::collections::HashSet::new();
-        for (id, score) in hot_results.iter() {
+        for (id, _score) in hot_results.iter() {
             seen.insert(*id);
         }
 
@@ -721,7 +724,8 @@ fn wal_benchmarks(c: &mut Criterion) {
         }
 
         b.iter(|| {
-            black_box(wal.sync().unwrap());
+            wal.sync().unwrap();
+            black_box(());
         });
     });
 
@@ -993,16 +997,20 @@ fn memory_efficiency_benchmarks(c: &mut Criterion) {
     });
 
     // Benchmark: cache hit rate under different loads
-    let load_patterns = vec![
-        ("uniform", |i: usize| i % 1000),
-        ("zipf_like", |i: usize| (i as f64).sqrt() as usize % 1000),
+    #[allow(clippy::type_complexity)]
+    let load_patterns: Vec<(&'static str, Box<dyn Fn(usize) -> usize>)> = vec![
+        ("uniform", Box::new(|i: usize| i % 1000)),
+        (
+            "zipf_like",
+            Box::new(|i: usize| (i as f64).sqrt() as usize % 1000),
+        ),
         (
             "hot_cold",
-            |i: usize| if i % 10 == 0 { i % 100 } else { i % 10 },
+            Box::new(|i: usize| if i % 10 == 0 { i % 100 } else { i % 10 }),
         ),
     ];
 
-    for (name, pattern_fn) in load_patterns {
+    for (name, pattern_fn) in load_patterns.into_iter() {
         group.bench_function(format!("hit_rate_{}", name), |b| {
             let hot = HotMemory::new(500);
             let entries = generate_entries(1000, 384);

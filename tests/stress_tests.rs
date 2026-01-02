@@ -27,7 +27,7 @@
 //! 4. **Recovery Stress**: Simulate crashes and verify recovery
 
 use std::collections::HashMap;
-use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
@@ -343,6 +343,10 @@ impl MockStorage {
         self.data.read().await.len()
     }
 
+    pub async fn is_empty(&self) -> bool {
+        self.len().await == 0
+    }
+
     pub fn stats(&self) -> (u64, u64) {
         (
             self.write_count.load(Ordering::SeqCst),
@@ -423,7 +427,7 @@ async fn stress_concurrent_read_write() {
     }
 
     // Spawn reader tasks
-    for reader_id in 0..CONCURRENT_READERS {
+    for _reader_id in 0..CONCURRENT_READERS {
         let storage = Arc::clone(&storage);
         let metrics = Arc::clone(&metrics);
         let keys = Arc::clone(&keys);
@@ -590,7 +594,7 @@ async fn stress_memory_pressure() {
         .map(|i| {
             let key = Uuid::new_v4();
             // Create varying size payloads
-            let size = 100 + (i % 1000) * 10; // 100 bytes to 10KB
+            let _size = 100 + (i % 1000) * 10; // 100 bytes to 10KB
             key
         })
         .collect();
@@ -860,11 +864,13 @@ async fn stress_reasonkit_mem_integration() {
 // ============================================================================
 
 /// Generate random payload of specified size
+#[allow(dead_code)]
 fn generate_payload(size: usize) -> Vec<u8> {
     (0..size).map(|i| (i % 256) as u8).collect()
 }
 
 /// Format bytes as human-readable size
+#[allow(dead_code)]
 fn format_bytes(bytes: u64) -> String {
     if bytes >= 1_073_741_824 {
         format!("{:.2} GB", bytes as f64 / 1_073_741_824.0)

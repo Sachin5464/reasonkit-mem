@@ -31,8 +31,8 @@ use reasonkit_mem::{
     embedding::{cosine_similarity, EmbeddingProvider, EmbeddingResult, EmbeddingVector},
     indexing::IndexManager,
     retrieval::{
-        FusionEngine, FusionStrategy, HybridResult, HybridRetriever, KnowledgeBase, RankedResult,
-        Reranker, RerankerCandidate, RerankerConfig, RetrievalStats,
+        FusionEngine, FusionStrategy, HybridRetriever, KnowledgeBase, RankedResult, Reranker,
+        RerankerCandidate, RerankerConfig,
     },
     Chunk, Document, DocumentContent, DocumentType, EmbeddingIds, MatchSource, Metadata,
     ProcessingState, ProcessingStatus, Result, RetrievalConfig, Source, SourceType,
@@ -109,8 +109,13 @@ impl MockEmbeddingProvider {
 
         // Fill remaining dimensions with deterministic noise based on hash
         let hash = Self::simple_hash(text);
-        for i in 38..self.dimension {
-            embedding[i] = ((hash >> (i % 32)) & 1) as f32 * 0.1;
+        for (i, item) in embedding
+            .iter_mut()
+            .enumerate()
+            .take(self.dimension)
+            .skip(38)
+        {
+            *item = ((hash >> (i % 32)) & 1) as f32 * 0.1;
         }
 
         // Normalize the embedding
@@ -1019,7 +1024,7 @@ async fn test_knowledge_base_api() {
         use_raptor: false,
         rerank: false,
     };
-    let results_with_config = kb.query_with_config("neural networks", &config).await;
+    let _results_with_config = kb.query_with_config("neural networks", &config).await;
     // Note: May return empty if no embedding pipeline configured
 
     // Stats

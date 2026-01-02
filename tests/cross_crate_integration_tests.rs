@@ -25,8 +25,7 @@
 use async_trait::async_trait;
 use chrono::Utc;
 use std::collections::HashMap;
-use std::sync::Arc;
-use std::time::Duration;
+
 use uuid::Uuid;
 
 // ============================================================================
@@ -34,10 +33,12 @@ use uuid::Uuid;
 // ============================================================================
 
 /// Mock embedding provider for deterministic testing
+#[allow(dead_code)]
 struct MockEmbeddingProvider {
     dimension: usize,
 }
 
+#[allow(dead_code)]
 impl MockEmbeddingProvider {
     fn new(dimension: usize) -> Self {
         Self { dimension }
@@ -110,7 +111,7 @@ impl reasonkit_mem::embedding::EmbeddingProvider for MockEmbeddingProvider {
 
 mod storage_operations_tests {
     use super::*;
-    use reasonkit_mem::{storage::Storage, Document, DocumentType, Metadata, Source, SourceType};
+    use reasonkit_mem::{Document, DocumentType, Metadata, Source, SourceType};
 
     /// Test: Document creation and storage
     #[tokio::test]
@@ -200,8 +201,7 @@ mod storage_operations_tests {
 mod search_operations_tests {
     use super::*;
     use reasonkit_mem::{
-        indexing::IndexManager,
-        retrieval::{FusionEngine, FusionStrategy, HybridRetriever, KnowledgeBase},
+        retrieval::{FusionStrategy, HybridRetriever},
         Document, DocumentType, RetrievalConfig, Source, SourceType,
     };
 
@@ -309,8 +309,7 @@ mod search_operations_tests {
 mod service_interface_tests {
     use super::*;
     use reasonkit_mem::service::{
-        Document, HybridConfig, IndexConfig, MemServiceImpl, MemoryConfig, MemoryService,
-        SearchResult,
+        Document, HybridConfig, MemServiceImpl, MemoryConfig, MemoryService,
     };
 
     /// Test: Service initialization
@@ -556,8 +555,7 @@ mod service_interface_tests {
 // ============================================================================
 
 mod raptor_tree_tests {
-    use super::*;
-    use reasonkit_mem::raptor::{OptimizedRaptorTree, RaptorOptConfig, RaptorTree};
+    use reasonkit_mem::raptor::{OptimizedRaptorTree, RaptorOptConfig};
 
     /// Test: RAPTOR configuration
     #[test]
@@ -591,7 +589,7 @@ mod raptor_tree_tests {
 
 mod indexing_tests {
     use super::*;
-    use reasonkit_mem::indexing::{BM25Index, IndexManager};
+    use reasonkit_mem::indexing::IndexManager;
 
     /// Test: Index manager creation
     #[test]
@@ -640,7 +638,7 @@ mod indexing_tests {
 
 mod error_handling_tests {
     use super::*;
-    use reasonkit_mem::error::{MemError, MemResult};
+    use reasonkit_mem::error::MemError;
 
     /// Test: Error types
     #[test]

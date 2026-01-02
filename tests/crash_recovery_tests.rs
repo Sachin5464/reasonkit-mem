@@ -21,11 +21,11 @@
 
 use std::collections::HashMap;
 use std::fs::{self, File, OpenOptions};
-use std::io::{self, BufRead, BufReader, Read, Seek, SeekFrom, Write};
+use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
 use tempfile::TempDir;
@@ -229,12 +229,10 @@ impl WriteAheadLog {
         let reader = BufReader::new(file);
         let mut max_seq = 0u64;
 
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                if let Ok(entry) = serde_json::from_str::<WalEntry>(&line) {
-                    if entry.sequence > max_seq {
-                        max_seq = entry.sequence;
-                    }
+        for line in reader.lines().map_while(Result::ok) {
+            if let Ok(entry) = serde_json::from_str::<WalEntry>(&line) {
+                if entry.sequence > max_seq {
+                    max_seq = entry.sequence;
                 }
             }
         }
@@ -277,11 +275,9 @@ impl WriteAheadLog {
         let reader = BufReader::new(file);
         let mut entries = Vec::new();
 
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                if let Ok(entry) = serde_json::from_str::<WalEntry>(&line) {
-                    entries.push(entry);
-                }
+        for line in reader.lines().map_while(Result::ok) {
+            if let Ok(entry) = serde_json::from_str::<WalEntry>(&line) {
+                entries.push(entry);
             }
         }
 
@@ -297,19 +293,17 @@ impl WriteAheadLog {
         let mut valid_entries = Vec::new();
         let mut corrupted_count = 0;
 
-        for line in reader.lines() {
-            if let Ok(line) = line {
-                match serde_json::from_str::<WalEntry>(&line) {
-                    Ok(entry) => {
-                        if self.enable_checksums && !entry.verify_checksum() {
-                            corrupted_count += 1;
-                            continue;
-                        }
-                        valid_entries.push(entry);
-                    }
-                    Err(_) => {
+        for line in reader.lines().map_while(Result::ok) {
+            match serde_json::from_str::<WalEntry>(&line) {
+                Ok(entry) => {
+                    if self.enable_checksums && !entry.verify_checksum() {
                         corrupted_count += 1;
+                        continue;
                     }
+                    valid_entries.push(entry);
+                }
+                Err(_) => {
+                    corrupted_count += 1;
                 }
             }
         }
@@ -672,7 +666,7 @@ async fn test_partial_write_recovery() {
 
         // Should recover at least some entries (those that were flushed)
         // Due to flush after each write, we expect all 50
-        assert!(report.entries_recovered >= 0, "Should recover some entries");
+        assert!(report.entries_recovered > 0, "Should recover some entries");
 
         let count = memory.count().await;
         println!("Recovered {} entries from partial write", count);
@@ -710,7 +704,7 @@ async fn test_corrupted_wal_entry_skipped() {
         )
         .unwrap();
         writeln!(file, "completely invalid garbage data 12345").unwrap();
-        writeln!(file, "").unwrap(); // Empty line
+        writeln!(file).unwrap(); // Empty line
     }
 
     // Phase 2: Recover and verify corrupted entries are skipped
@@ -1199,9 +1193,8 @@ async fn test_concurrent_writes_recovery() {
     let config = DualLayerConfig::with_data_dir(temp_dir.path().to_path_buf());
 
     let entry_count = 100;
-    let mut all_ids = Vec::new();
 
-    {
+    let all_ids: Vec<Uuid> = {
         let memory = Arc::new(DualLayerMemory::new(config.clone()).await.unwrap());
         let ids = Arc::new(RwLock::new(Vec::new()));
 
@@ -1235,10 +1228,10 @@ async fn test_concurrent_writes_recovery() {
 
         // Sync and get IDs
         memory.sync().await.unwrap();
-        all_ids = ids.read().await.clone();
-
+        let x = ids.read().await.clone();
         // Simulate crash
-    }
+        x
+    };
 
     // Recover and verify
     {

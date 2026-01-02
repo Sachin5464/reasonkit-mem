@@ -717,7 +717,8 @@ mod tests {
 
     #[test]
     fn test_serialize_embedding_roundtrip() {
-        let original: Vec<f32> = vec![1.0, -2.5, 3.14159, 0.0, f32::MAX, f32::MIN];
+        let original: Vec<f32> = vec![1.0, -2.5, std::f32::consts::PI, 0.0, f32::MAX, f32::MIN];
+        // (use std::f32::consts::PI to avoid associated-type ambiguity)
         let bytes = serialize_embedding(&original);
         let recovered = deserialize_embedding(&bytes).unwrap();
         assert_eq!(original, recovered);
@@ -786,7 +787,7 @@ mod tests {
             data: WalEntryData::Entry(MemoryEntryCompact {
                 id: Uuid::new_v4(),
                 content: "WAL test".to_string(),
-                embedding_bytes: serialize_embedding(&vec![1.0, 2.0]),
+                embedding_bytes: serialize_embedding(&[1.0, 2.0]),
                 metadata: std::collections::HashMap::new(),
                 created_at: 1234567890,
                 document_id: None,

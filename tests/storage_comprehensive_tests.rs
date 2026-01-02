@@ -13,6 +13,7 @@
 //! Goal: Increase coverage from 68% to 85%+
 
 use chrono::Utc;
+#[allow(unused_imports)]
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::Duration;
@@ -23,7 +24,7 @@ use reasonkit_mem::storage::{
     AccessContext, AccessControlConfig, AccessLevel, DualLayerConfig, EmbeddedStorageConfig,
     EmbeddingCache, EmbeddingCacheConfig, InMemoryStorage, MemoryEntry, MemoryLayer,
     QdrantConnectionConfig, QdrantSecurityConfig, RecoveryReport, Storage, StorageBackend,
-    StorageStats, SyncStats,
+    SyncStats,
 };
 use reasonkit_mem::types::{
     Author, Chunk, ContentFormat, Document, DocumentContent, DocumentType, EmbeddingIds, Metadata,
@@ -50,6 +51,7 @@ fn create_test_document() -> Document {
 }
 
 /// Create a test document with specific ID
+#[allow(dead_code)]
 fn create_test_document_with_id(id: Uuid) -> Document {
     let mut doc = create_test_document();
     doc.id = id;
@@ -73,11 +75,11 @@ fn create_different_embedding() -> Vec<f32> {
     let dim = 1536;
     let mut v = vec![0.0f32; dim];
     // Make first half positive, second half negative for distinct vector
-    for i in 0..dim / 2 {
-        v[i] = 0.1;
+    for item in v.iter_mut().take(dim / 2) {
+        *item = 0.1;
     }
-    for i in dim / 2..dim {
-        v[i] = -0.1;
+    for item in v.iter_mut().take(dim).skip(dim / 2) {
+        *item = -0.1;
     }
     // Normalize
     let norm: f32 = v.iter().map(|x| x * x).sum::<f32>().sqrt();
@@ -522,7 +524,7 @@ async fn test_in_memory_storage_search_by_vector() {
     // Results should be sorted by score descending
     // emb1 and emb3 are identical, so they should have score 1.0
     // emb2 is different, so it should have a lower score
-    let (first_id, first_score) = &results[0];
+    let (_first_id, first_score) = &results[0];
     assert!(*first_score > 0.9); // High similarity
 }
 
@@ -985,7 +987,7 @@ async fn test_concurrent_document_access() {
 
     let mut handles = vec![];
 
-    for i in 0..10 {
+    for _i in 0..10 {
         let storage = storage.clone();
         let barrier = barrier.clone();
 
@@ -1080,7 +1082,7 @@ async fn test_file_storage_stats() {
     for _ in 0..3 {
         let id = Uuid::new_v4();
         storage
-            .store_embeddings(&id, &vec![0.1f32; 10], &ctx)
+            .store_embeddings(&id, &[0.1f32; 10], &ctx)
             .await
             .unwrap();
     }

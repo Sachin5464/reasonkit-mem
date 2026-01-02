@@ -1126,7 +1126,11 @@ mod tests {
             let entry = ColdMemoryEntry::with_id(id, content.to_string(), embedding.clone());
             cold.store(&entry).await.expect("Store failed");
             cold.flush().await.expect("Flush failed");
+            drop(cold); // Ensure database is released before reopening
         }
+
+        // Brief delay to ensure file lock is released (Sled async cleanup)
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
 
         // Second: reopen and verify data persists
         {
@@ -1761,9 +1765,9 @@ mod tests {
 
         // Spawn concurrent read tasks
         let mut handles = Vec::new();
-        for i in 0..10 {
+        for id in ids.iter().take(10) {
+            let id = *id;
             let cold_clone = Arc::clone(&cold);
-            let id = ids[i];
             let handle = tokio::spawn(async move {
                 for _ in 0..100 {
                     let result = cold_clone.get(&id).await;
