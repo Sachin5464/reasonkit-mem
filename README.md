@@ -4,6 +4,8 @@
 
 **Memory & Retrieval Infrastructure for ReasonKit**
 
+[![CI](https://img.shields.io/github/actions/workflow/status/reasonkit/reasonkit-mem/ci.yml?branch=main&style=flat-square&logo=github&label=CI&color=06b6d4)](https://github.com/reasonkit/reasonkit-mem/actions/workflows/ci.yml)
+[![Security](https://img.shields.io/github/actions/workflow/status/reasonkit/reasonkit-mem/security.yml?branch=main&style=flat-square&logo=github&label=Security&color=10b981)](https://github.com/reasonkit/reasonkit-mem/actions/workflows/security.yml)
 [![Crates.io](https://img.shields.io/crates/v/reasonkit-mem?style=flat-square&color=%2306b6d4)](https://crates.io/crates/reasonkit-mem)
 [![docs.rs](https://img.shields.io/docsrs/reasonkit-mem?style=flat-square&color=%2310b981)](https://docs.rs/reasonkit-mem)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square&color=%23a855f7)](./LICENSE)
